@@ -1,0 +1,11 @@
+services:
+  pixel-db-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./:/app
