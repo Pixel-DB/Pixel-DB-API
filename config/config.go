@@ -9,9 +9,9 @@ import (
 
 func Config(key string) string {
 
-	err := godotenv.Load(".env")
+	err := godotenv.Load("stack.env")
 	if err != nil {
-		fmt.Print("Error loading .env file")
+		fmt.Print("Error loading stack.env file")
 	}
 	return os.Getenv(key)
 }
