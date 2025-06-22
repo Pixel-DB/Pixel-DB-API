@@ -5,15 +5,14 @@ import (
 	"log"
 
 	"github.com/Pixel-DB/Pixel-DB-API/config"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/router"
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendStatus(fiber.StatusOK)
-	})
+	router.SetupRouter(app)
 	log.Fatal(app.Listen(":3000"))
 
 	fmt.Println(config.Config("PORT"))
