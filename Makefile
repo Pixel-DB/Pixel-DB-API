@@ -1,6 +1,6 @@
 
-DEV_COMPOSE_FILE=docker-compose.dev.yml
-PROD_COMPOSE_FILE=docker-compose.yml
+DEV_COMPOSE_FILE= docker/docker-compose.dev.yml
+PROD_COMPOSE_FILE=docker/docker-compose.yml
 
 
 help:
@@ -31,7 +31,7 @@ dev:
 	@echo "Backend Service"
 	@echo ""
 	@echo "Starting Docker Compose in development mode..."
-	docker compose -f $(DEV_COMPOSE_FILE) up --build
+	docker compose --env-file=.env -f $(DEV_COMPOSE_FILE) up --build
 
 prod:
 	@echo "  ____    ___                 _   ____    ____  ";
@@ -43,7 +43,7 @@ prod:
 	@echo "Backend Service"
 	@echo ""
 	@echo "Starting Docker Compose in production mode..."
-	docker compose -f $(PROD_COMPOSE_FILE) up --build
+	docker compose --env-file=stack.env -f $(PROD_COMPOSE_FILE) up --build
 
 down:
 	@echo "Stopping and removing containers..."
@@ -60,8 +60,8 @@ build:
 	@echo "Backend Service"
 	@echo ""
 	@echo "Building Docker images..."
-	docker compose -f $(DEV_COMPOSE_FILE) build
-	docker compose -f $(PROD_COMPOSE_FILE) build
+	docker compose --env-file=.env -f $(DEV_COMPOSE_FILE) build
+	docker compose --env-file=stack.env -f $(PROD_COMPOSE_FILE) build
 
 logs:
 	@echo "Tailing logs of containers..."

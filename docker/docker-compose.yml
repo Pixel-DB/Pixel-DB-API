@@ -1,9 +1,9 @@
 services:
   pixel-db-api:
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: ../
+      dockerfile: docker/Dockerfile.dev
     ports:
       - ${PORT}:${PORT}
     volumes:
-      - ./:/app
+      - ../:/app
