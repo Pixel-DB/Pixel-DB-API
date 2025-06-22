@@ -1,8 +1,5 @@
 services:
   pixel-db-api-dev:
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
     build:
       context: ../
       dockerfile: docker/Dockerfile.dev
