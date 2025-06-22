@@ -31,7 +31,7 @@ dev:
 	@echo "Backend Service"
 	@echo ""
 	@echo "Starting Docker Compose in development mode..."
-	docker compose -f $(DEV_COMPOSE_FILE) up
+	docker compose -f $(DEV_COMPOSE_FILE) up --build
 
 prod:
 	@echo "  ____    ___                 _   ____    ____  ";
