@@ -1,5 +1,5 @@
 services:
-  pixel-db-api-dev:
+  api-dev:
     build:
       context: ../
       dockerfile: docker/Dockerfile.dev
@@ -7,3 +7,16 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - ../:/app
+  db-dev:
+    image: postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - PGDATA=/data/postgres
+    volumes:
+      - db-dev:/data/postgres
+    ports:
+      - "5432:5432"
+volumes:
+  db-dev:        
