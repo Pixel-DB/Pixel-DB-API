@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/Pixel-DB/Pixel-DB-API/config"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -29,6 +30,6 @@ func ConnectDB() {
 		panic("failed to connect database")
 	}
 	fmt.Println("Connection Opened to Database")
-	DB.AutoMigrate()
+	DB.AutoMigrate(model.Users{}) // Load the models (tables) to DB
 	fmt.Println("Database Migrated")
 }
