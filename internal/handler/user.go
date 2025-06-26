@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -24,6 +25,16 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "errors": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Create User", "data": u})
+	UserResponse := dto.UserResponse{
+		ID:        u.ID,
+		CreatedAt: u.CreatedAt,
+		Username:  u.Username,
+		Email:     u.Email,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Role:      u.Role,
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "message": "Created User", "data": UserResponse})
 
 }

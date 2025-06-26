@@ -1,10 +1,10 @@
 package dto
 
-import "github.com/google/uuid"
+import "time"
 
 type UserResponse struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt string    `json:"createdAt"`
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	FirstName string    `json:"firstName"`
