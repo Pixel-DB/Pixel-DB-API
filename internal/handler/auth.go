@@ -1,12 +1,27 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/security"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
+
+func GetUserByEmail(e string) (*model.Users, error) {
+	u := new(model.Users)
+	db := database.DB
+	if err := db.Where(&model.Users{Email: e}).First(u).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return u, nil
+}
 
 func Login(c *fiber.Ctx) error {
 	type LoginInput struct {
@@ -16,16 +31,23 @@ func Login(c *fiber.Ctx) error {
 	input := new(LoginInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.JSON(fiber.Map{"status": "Error"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Invalid request", "data": nil})
 	}
 
-	userModel := new(model.Users)
+	userModel, err := GetUserByEmail(input.Email)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Error finding user", "data": nil})
+	}
 
-	db := database.DB
-	db.Where(model.Users{Email: input.Email}).First(userModel)
+	if userModel == nil {
+		dummyHash := "$2a$14$ajq8Q7fbtFRQvXpdCq7Jcuy.Rx1h/L4J60Otx.gyNLbAYctGMJ9tK" //Hash something for Timing Attacks protection
+		security.CheckPasswordHash(dummyHash, input.Password)
+
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid Email or Password", "data": nil})
+	}
 
 	if !security.CheckPasswordHash(userModel.Password, input.Password) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid identity or password", "data": nil})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid Email or Password", "data": nil})
 	}
 
 	AuthResponse := dto.AuthResponse{
