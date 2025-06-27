@@ -7,6 +7,7 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/security"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -50,11 +51,17 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid Email or Password", "data": nil})
 	}
 
+	token, err := utils.GenerateToken(userModel.ID, userModel.Email, userModel.Username)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Error Signing Token", "data": err.Error()})
+	}
+
 	AuthResponse := dto.AuthResponse{
 		ID:       userModel.ID,
 		Email:    userModel.Email,
 		Username: userModel.Username,
 		Role:     userModel.Role,
+		Token:    token,
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "message": "Logged in", "data": AuthResponse})
