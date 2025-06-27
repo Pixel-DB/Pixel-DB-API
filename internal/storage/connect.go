@@ -7,8 +7,9 @@ import (
 	"github.com/gofiber/storage/minio"
 )
 
-func InitMinioClient() error {
+var minioStorage *minio.Storage
 
+func InitMinioClient() error {
 	storage := minio.New(minio.Config{
 		Bucket:   "pixel-arts",
 		Endpoint: "minio-dev:9000",
@@ -23,5 +24,7 @@ func InitMinioClient() error {
 			log.Fatalf("failed to create bucket: %v", err)
 		}
 	}
+
+	minioStorage = storage
 	return nil
 }
