@@ -1,28 +1,11 @@
 package handler
 
 import (
-	"errors"
-
-	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
-	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/security"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
-
-func GetUserByEmail(e string) (*model.Users, error) {
-	u := new(model.Users)
-	db := database.DB
-	if err := db.Where(&model.Users{Email: e}).First(u).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return u, nil
-}
 
 func Login(c *fiber.Ctx) error {
 	type LoginInput struct {
@@ -35,7 +18,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Invalid request", "data": nil})
 	}
 
-	userModel, err := GetUserByEmail(input.Email)
+	userModel, err := utils.GetUser(input.Email)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Error finding user", "data": nil})
 	}
