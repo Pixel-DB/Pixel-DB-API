@@ -18,18 +18,5 @@ services:
       - db-dev:/data/postgres
     ports:
       - "5432:5432"
-  minio-dev:
-    image: bitnami/minio:latest
-    ports:
-      - "9000:9000"
-      - "${MINIO_PORT}:${MINIO_PORT}"
-    environment:
-      - MINIO_ROOT_USER=${MINIO_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
-    volumes:
-      - ~/minio/data:/data
-    command: server /data --console-address ":${MINIO_PORT}"  
-      
-
 volumes:
   db-dev:        
