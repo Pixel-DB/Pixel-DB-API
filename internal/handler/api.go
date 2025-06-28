@@ -49,6 +49,9 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
+	//token := c.Locals("user").(*jwt.Token)
+	//u, err := utils.GetUser(i.Email)
+
 	return c.JSON(fiber.Map{"status": "success", "message": "Uploaded the File", "data": nil})
 
 }
