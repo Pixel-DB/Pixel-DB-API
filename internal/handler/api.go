@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -15,38 +15,40 @@ func Hello(c *fiber.Ctx) error {
 }
 
 func UploadPixelArt(c *fiber.Ctx) error {
-	file, err := c.FormFile("document")
-	if err != nil {
-		return err
-	}
-
-	fileContent, err := file.Open()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to open uploaded file",
-			"error":   err.Error(),
-		})
-	}
-	defer fileContent.Close()
-
 	//Setup MinIO client
 	minioClient, err := minio.New("minio-dev:9000", &minio.Options{
 		Creds:  credentials.NewStaticV4("root", "iamroot123", ""),
 		Secure: false,
 	})
 
-	_, err = minioClient.PutObject(context.Background(), "test-bucket", "file.txt", fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	file, err := c.FormFile("document")
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  "error",
-			"message": "Failed to upload file to MinIO",
+			"message": "Failed to upload the file",
 		})
 	}
 
-	log.Printf("Successfully uploaded of size %d", file.Size)
+	fileContent, err := file.Open()
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Failed to open uploaded file",
+		})
+	}
+	defer fileContent.Close()
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	_, err = minioClient.PutObject(context.Background(), "test-bucket", utils.GenerateFilename(file.Filename), fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Failed to upload file to S3-Service",
+		})
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "message": "Uploaded the File", "data": nil})
 
 }
