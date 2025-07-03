@@ -4,8 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -21,7 +25,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		Secure: false,
 	})
 
-	file, err := c.FormFile("document")
+	file, err := c.FormFile("document") //Get file from passed Data
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -30,7 +34,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
-	fileContent, err := file.Open()
+	fileContent, err := file.Open() //Open file
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -40,7 +44,10 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 	defer fileContent.Close()
 
-	_, err = minioClient.PutObject(context.Background(), "test-bucket", utils.GenerateFilename(file.Filename), fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	newFilename := utils.GenerateFilename(file.Filename) //Generate a new filename
+
+	//Upload file to MinIO
+	_, err = minioClient.PutObject(context.Background(), "test-bucket", newFilename, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -49,9 +56,30 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
-	//token := c.Locals("user").(*jwt.Token)
-	//u, err := utils.GetUser(i.Email)
+	token := c.Locals("user").(*jwt.Token)    //Load Token
+	userID := utils.GetUserIDFromToken(token) //Get UserID from Token
+	user, err := utils.GetUser(userID)        //Get User from DB
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Uploaded the File", "data": nil})
+	db := database.DB //Get DB instance
+	PixelArts := new(model.PixelArts)
+
+	PixelArts.OwnerID = user.ID
+	if err := db.Create(PixelArts).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "error": err.Error()})
+	}
+
+	data := dto.UploadFileResponse{
+		ID:            PixelArts.ID,
+		CreatedAt:     PixelArts.CreatedAt,
+		OwnerID:       user.ID,
+		OwnerUsername: user.Username,
+		Filename:      newFilename,
+		OldFilename:   file.Filename,
+		PixelArtURL:   "placeholder-url.com",
+		PixelArtSize:  file.Size,
+	}
+	fmt.Println(user.ID, user.Email)
+
+	return c.JSON(fiber.Map{"status": "success", "message": "Uploaded the File", "data": data})
 
 }

@@ -18,7 +18,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Invalid request", "data": nil})
 	}
 
-	userModel, err := utils.GetUser(input.Email)
+	userModel, err := utils.GetUserEmail(input.Email)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Error finding user", "data": nil})
 	}

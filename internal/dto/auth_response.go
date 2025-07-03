@@ -1,9 +1,9 @@
 package dto
 
 type AuthResponse struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Role     string `json:"role"`
-	Token    string `json:"token"`
+	ID       string
+	Username string
+	Email    string
+	Role     string
+	Token    string
 }
