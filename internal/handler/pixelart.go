@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
@@ -27,7 +28,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
-	file, err := c.FormFile("document") //Get file from passed Data
+	file, err := c.FormFile("pixelart") //Get file from passed Data
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -60,7 +61,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	//Upload file to MinIO
-	_, err = minioClient.PutObject(context.Background(), "test-bucket", newFilename, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFilename, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
