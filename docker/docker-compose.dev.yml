@@ -28,8 +28,6 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
     volumes:
       - ~/minio/data:/data
-    command: server /data --console-address ":${MINIO_PORT}"  
-      
-
+    command: server /data --console-address ":${MINIO_PORT}"     
 volumes:
   db-dev:        

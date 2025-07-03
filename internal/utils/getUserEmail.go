@@ -8,10 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUser(i string) (*model.Users, error) {
+func GetUserEmail(e string) (*model.Users, error) {
 	u := new(model.Users)
 	db := database.DB
-	if err := db.Where(&model.Users{ID: i}).First(u).Error; err != nil {
+	if err := db.Where(&model.Users{Email: e}).First(u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
