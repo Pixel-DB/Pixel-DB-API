@@ -25,6 +25,13 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		Secure: false,
 	})
 
+	token := c.Locals("user").(*jwt.Token)    //Load Token
+	userID := utils.GetUserIDFromToken(token) //Get UserID from Token
+	user, err := utils.GetUser(userID)        //Get User from DB
+
+	db := database.DB //Get DB instance
+	PixelArts := new(model.PixelArts)
+
 	file, err := c.FormFile("document") //Get file from passed Data
 	if err != nil {
 		fmt.Println(err.Error())
@@ -44,7 +51,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 	defer fileContent.Close()
 
-	newFilename := utils.GenerateFilename(file.Filename) //Generate a new filename
+	newFilename := utils.GenerateFilename(file.Filename, user.Username) //Generate a new filename
 
 	//Upload file to MinIO
 	_, err = minioClient.PutObject(context.Background(), "test-bucket", newFilename, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
@@ -55,13 +62,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			"message": "Failed to upload file to S3-Service",
 		})
 	}
-
-	token := c.Locals("user").(*jwt.Token)    //Load Token
-	userID := utils.GetUserIDFromToken(token) //Get UserID from Token
-	user, err := utils.GetUser(userID)        //Get User from DB
-
-	db := database.DB //Get DB instance
-	PixelArts := new(model.PixelArts)
 
 	PixelArts.OwnerID = user.ID
 	if err := db.Create(PixelArts).Error; err != nil {
