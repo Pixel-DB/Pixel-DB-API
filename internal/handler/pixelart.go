@@ -99,3 +99,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Uploaded the File", "data": data})
 
 }
+
+func GetPixelArt(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{"status": "success", "message": "Get Pixel Art", "data": nil})
+}
