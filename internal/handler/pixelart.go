@@ -101,5 +101,22 @@ func UploadPixelArt(c *fiber.Ctx) error {
 }
 
 func GetPixelArt(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"status": "success", "message": "Get Pixel Art", "data": nil})
+	//Init Minio Service
+	minioClient, err := utils.InitMinioClient()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Failed to initialize storage service",
+			"error":   err.Error(),
+		})
+	}
+
+	//Get one specify piyel Art
+	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), c.Params("pixelartname"), minio.GetObjectOptions{})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to get pixel art from storage service"})
+	}
+
+	c.Set("Content-Type", "image/png")
+	return c.SendStream(object)
 }
