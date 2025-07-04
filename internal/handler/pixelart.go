@@ -111,6 +111,18 @@ func GetPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
+	//All Pixel Arts
+	if c.Params("pixelartname") == "" {
+		var pixelArts []model.PixelArts
+
+		db := database.DB
+		db.Find(&pixelArts)
+
+		return c.JSON(fiber.Map{
+			"data": pixelArts,
+		})
+	}
+
 	//Get one specify piyel Art
 	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), c.Params("pixelartname"), minio.GetObjectOptions{})
 	if err != nil {
