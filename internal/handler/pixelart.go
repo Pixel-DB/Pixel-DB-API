@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/minio/minio-go/v7"
+	"github.com/morkid/paginate"
 )
 
 func UploadPixelArt(c *fiber.Ctx) error {
@@ -111,19 +112,19 @@ func GetPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
-	//All Pixel Arts
+	//All Pixel Arts with Pagination
 	if c.Params("pixelartname") == "" {
+		pg := paginate.New()
 		var pixelArts []model.PixelArts
 
-		db := database.DB
-		db.Find(&pixelArts)
+		res := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
 
 		return c.JSON(fiber.Map{
-			"data": pixelArts,
+			"data": res,
 		})
 	}
 
-	//Get one specify piyel Art
+	//Get one specify pixel Art
 	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), c.Params("pixelartname"), minio.GetObjectOptions{})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to get pixel art from storage service"})

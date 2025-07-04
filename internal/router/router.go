@@ -20,6 +20,6 @@ func SetupRouter(app *fiber.App) {
 
 	pixelart := app.Group("/pixelart")                                 //Pixel Art Route
 	pixelart.Post("/", middleware.Protected(), handler.UploadPixelArt) //Upload a Pixel Art
-	pixelart.Get("/:pixelartname?", handler.GetPixelArt)               //Get Pixel Art
+	pixelart.Get("/:pixelartname?", handler.GetPixelArt)               //Get Pixel Art one and all Pixel Arts with Pagination
 
 }
