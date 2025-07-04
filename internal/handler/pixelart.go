@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"path"
+	"strings"
 
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
@@ -60,9 +62,12 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
+	newFileName := utils.GenerateFilename(file.Filename, user.Username)
+
 	//Save Data in DB
 	pixelArts := &model.PixelArts{
-		OwnerID: user.ID,
+		OwnerID:  user.ID,
+		Filename: newFileName,
 	}
 
 	if err := database.DB.Create(pixelArts).Error; err != nil {
@@ -72,8 +77,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-
-	newFileName := pixelArts.ID + "-" + file.Filename //Create new filename with the ID of the PixelArt
 
 	//Upload file to MinIO
 	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFileName, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
@@ -130,4 +133,40 @@ func GetPixelArt(c *fiber.Ctx) error {
 		"status": "success",
 		"data":   p,
 	})
+}
+
+func GetPixelArtPicture(c *fiber.Ctx) error {
+
+	// get Pixel Art ID from params
+	pixelArtID := c.Params("pixelArtID")
+	p := new(model.PixelArts)
+	db := database.DB
+	if err := db.Where(&model.PixelArts{ID: pixelArtID}).First(p).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return nil
+	}
+
+	// INit Minio
+	minioClient, err := utils.InitMinioClient()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Failed to initialize storage service",
+			"error":   err.Error(),
+		})
+	}
+
+	//
+	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), p.Filename, minio.GetObjectOptions{})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to get pixel art from storage service"})
+	}
+
+	ext := strings.ToLower(strings.TrimPrefix(path.Ext(p.Filename), ".")) //To Lower, Cut ".", get Ext
+	c.Set("Content-Type", "image/"+ext)
+
+	return c.SendStream(object)
+
 }

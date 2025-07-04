@@ -12,6 +12,7 @@ type PixelArts struct {
 	CreatedAt time.Time
 	URL       string `validate:"required,url"`
 	OwnerID   string `validate:"required" gorm:"type:uuid;"`
+	Filename  string `validate:"required"`
 }
 
 func (u *PixelArts) BeforeCreate(tx *gorm.DB) (err error) {
