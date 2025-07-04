@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/Pixel-DB/Pixel-DB-API/config"
@@ -13,6 +14,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/minio/minio-go/v7"
 	"github.com/morkid/paginate"
+	"gorm.io/gorm"
 )
 
 func UploadPixelArt(c *fiber.Ctx) error {
@@ -102,20 +104,11 @@ func UploadPixelArt(c *fiber.Ctx) error {
 }
 
 func GetPixelArt(c *fiber.Ctx) error {
-	//Init Minio Service
-	minioClient, err := utils.InitMinioClient()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to initialize storage service",
-			"error":   err.Error(),
-		})
-	}
 
 	//All Pixel Arts with Pagination
-	if c.Params("pixelartname") == "" {
-		pg := paginate.New()
+	if c.Params("pixelArtID") == "" {
 		var pixelArts []model.PixelArts
+		pg := paginate.New()
 
 		res := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
 
@@ -124,12 +117,18 @@ func GetPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
-	//Get one specify pixel Art
-	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), c.Params("pixelartname"), minio.GetObjectOptions{})
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to get pixel art from storage service"})
+	//Single Pixel Art DB entry
+	pixelArtID := c.Params("pixelArtID")
+	p := new(model.PixelArts)
+	db := database.DB
+	if err := db.Where(&model.PixelArts{ID: pixelArtID}).First(p).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return nil
 	}
-
-	c.Set("Content-Type", "image/png")
-	return c.SendStream(object)
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"data":   p,
+	})
 }
