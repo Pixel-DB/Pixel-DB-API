@@ -50,9 +50,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 	defer fileContent.Close()
 
-	//Generate a new filename
-	newFilename := utils.GenerateFilename(file.Filename, user.Username)
-
 	// Initialize MinIO client
 	minioClient, err := utils.InitMinioClient()
 	if err != nil {
@@ -60,16 +57,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			"status":  "error",
 			"message": "Failed to initialize storage service",
 			"error":   err.Error(),
-		})
-	}
-
-	//Upload file to MinIO
-	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFilename, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
-	if err != nil {
-		fmt.Println(err.Error())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to upload file to S3-Service",
 		})
 	}
 
@@ -86,13 +73,25 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		})
 	}
 
+	newFileName := pixelArts.ID + "-" + file.Filename //Create new filename with the ID of the PixelArt
+
+	//Upload file to MinIO
+	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFileName, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Failed to upload file to S3-Service",
+		})
+	}
+
 	// Create API response data
 	data := dto.UploadFileResponse{
 		ID:            pixelArts.ID,
 		CreatedAt:     pixelArts.CreatedAt,
 		OwnerID:       user.ID,
 		OwnerUsername: user.Username,
-		Filename:      newFilename,
+		Filename:      newFileName,
 		OldFilename:   file.Filename,
 		PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
 		PixelArtSize:  file.Size,
