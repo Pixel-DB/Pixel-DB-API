@@ -29,6 +29,10 @@ Set up the environment variables in a `stack.env` file like in the `.env.example
     DB_PORT=5432
     DB_NAME=example_db
     JWT_SECRET=example_secret
+    MINIO_USER=root
+    MINIO_PASSWORD=iamroot123
+    MINIO_PORT=9001
+    MINIO_BUCKET_NAME=pixelarts
 ```
 
 Help:
