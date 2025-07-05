@@ -6,10 +6,15 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/router"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
 	app := fiber.New()
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://192.168.178.111:5173, http://localhost:5173", //Change to your frontend URL
+	}))
 
 	router.SetupRouter(app)
 	database.ConnectDB()
