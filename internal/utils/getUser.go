@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUser(i string) (*model.Users, error) {
+func GetUser(i string) (*model.Users, error) { //Get user by ID
 	u := new(model.Users)
 	db := database.DB
 	if err := db.Where(&model.Users{ID: i}).First(u).Error; err != nil {
