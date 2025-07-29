@@ -14,7 +14,7 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: config.Config("FROTEND_URL"),
+		AllowOrigins: config.Config("FRONTEND_URL"),
 	}))
 
 	router.SetupRouter(app)
