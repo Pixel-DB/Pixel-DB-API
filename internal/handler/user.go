@@ -45,3 +45,7 @@ func CreateUser(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Created User", "data": UserResponse})
 
 }
+
+func GetUser(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{"status": "success", "message": "Get User", "data": "Not implemented yet"})
+}
