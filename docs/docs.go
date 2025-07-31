@@ -31,7 +31,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:3000",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Pixel Schwanz",
+	Title:            "Mein Schwanz ist lang",
 	Description:      "Pixel",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

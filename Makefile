@@ -30,6 +30,8 @@ dev:
 	@echo "				by brainlesslukas"
 	@echo "Backend Service"
 	@echo ""
+	@echo "Generating Swagger-Docs..."
+	swag init -d cmd/app
 	@echo "Starting Docker Compose in development mode..."
 	docker compose --env-file=stack.env -f $(DEV_COMPOSE_FILE) up --build
 

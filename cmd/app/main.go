@@ -10,14 +10,11 @@ import (
 	"log"
 )
 
-// @title Pixel Schwanz
-// @version 1.1
-// @description Pixel
-// @termsOfService http://swagger.io/terms/
-// @contact.name API Support
-// @contact.email fiber@swagger.io
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @title PixelDB
+// @version 0.1
+// @description Pixel-BD is an open-source online platform where anyone can upload, share, and showcase their pixel art creations with the community.
+// @contact.name Lukas Haible
+// @contact.email lukas.haible@web.de
 // @host localhost:3000
 // @BasePath /
 func main() {
