@@ -2,14 +2,18 @@ basePath: /
 host: localhost:3000
 info:
   contact:
-    email: fiber@swagger.io
-    name: API Support
-  description: Pixel
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Mein Schwanz ist lang
-  version: "1.1"
-paths: {}
+    email: lukas.haible@web.de
+    name: Lukas Haible
+  description: Pixel-BD is an open-source online platform where anyone can upload,
+    share, and showcase their pixel art creations with the community.
+  title: PixelDB
+  version: "0.1"
+paths:
+  /:
+    get:
+      description: This is the base route. You can check, if the API is online.
+      responses: {}
+      summary: Hello
+      tags:
+      - Base
 swagger: "2.0"

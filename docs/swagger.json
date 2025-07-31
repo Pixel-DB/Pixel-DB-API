@@ -1,20 +1,26 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Pixel",
-        "title": "Mein Schwanz ist lang",
-        "termsOfService": "http://swagger.io/terms/",
+        "description": "Pixel-BD is an open-source online platform where anyone can upload, share, and showcase their pixel art creations with the community.",
+        "title": "PixelDB",
         "contact": {
-            "name": "API Support",
-            "email": "fiber@swagger.io"
+            "name": "Lukas Haible",
+            "email": "lukas.haible@web.de"
         },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "1.1"
+        "version": "0.1"
     },
     "host": "localhost:3000",
     "basePath": "/",
-    "paths": {}
+    "paths": {
+        "/": {
+            "get": {
+                "description": "This is the base route. You can check, if the API is online.",
+                "tags": [
+                    "Base"
+                ],
+                "summary": "Hello",
+                "responses": {}
+            }
+        }
+    }
 }

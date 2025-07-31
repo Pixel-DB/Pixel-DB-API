@@ -9,30 +9,36 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "API Support",
-            "email": "fiber@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "name": "Lukas Haible",
+            "email": "lukas.haible@web.de"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/": {
+            "get": {
+                "description": "This is the base route. You can check, if the API is online.",
+                "tags": [
+                    "Base"
+                ],
+                "summary": "Hello",
+                "responses": {}
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.1",
+	Version:          "0.1",
 	Host:             "localhost:3000",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Mein Schwanz ist lang",
-	Description:      "Pixel",
+	Title:            "PixelDB",
+	Description:      "Pixel-BD is an open-source online platform where anyone can upload, share, and showcase their pixel art creations with the community.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

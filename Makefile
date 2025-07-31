@@ -31,7 +31,7 @@ dev:
 	@echo "Backend Service"
 	@echo ""
 	@echo "Generating Swagger-Docs..."
-	swag init -d cmd/app
+	swag init -q -g cmd/app/main.go
 	@echo "Starting Docker Compose in development mode..."
 	docker compose --env-file=stack.env -f $(DEV_COMPOSE_FILE) up --build
 
