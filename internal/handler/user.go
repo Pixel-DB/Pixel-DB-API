@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
@@ -13,43 +12,87 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// CreateUser godoc
+// @Summary Create User
+// @Description Creates a new user account by accepting user details such as username, email, password, firstname and lastname.
+// @Tags User
+// @Param        credentials  body  dto.UserRequest true  "User Credentials"
+// @consume json
+// @Success 200 {object} dto.UserResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /user [post]
 func CreateUser(c *fiber.Ctx) error {
 	u := new(model.Users)
+	r := dto.UserRequest{}
 	db := database.DB
 
-	if err := c.BodyParser(u); err != nil {
+	if err := c.BodyParser(&r); err != nil {
 		return c.JSON(fiber.Map{"status": "Error"})
 	}
+
+	validate := validator.New()
+	if err := validate.Struct(r); err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Validation Error. Check Request.-",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
+	}
+
+	u.Username = r.Username
+	u.Email = r.Email
+	u.FirstName = r.FirstName
+	u.LastName = r.LastName
 	u.Role = "user"
 
-	hashedPassword, err := security.HashPassword(u.Password)
+	hashedPassword, err := security.HashPassword(r.Password)
 	if err != nil {
-		return c.JSON(fiber.Map{"status": "Error hashing password", "error": err.Error()})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Couldn't Hash Password",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 	u.Password = hashedPassword
 
-	validate := validator.New()
-	if err := validate.Struct(u); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid request body", "error": err.Error()})
-	}
 	if err := db.Create(u).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "error": err.Error()})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Couldn't create User",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusConflict).JSON(ErrorResponse)
 	}
 
 	UserResponse := dto.UserResponse{
-		ID:        u.ID,
-		CreatedAt: u.CreatedAt,
-		Username:  u.Username,
-		Email:     u.Email,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Role:      u.Role,
+		Status:  "Success",
+		Message: "Created User",
+		Data: dto.Data{
+			ID:        u.ID,
+			CreatedAt: u.CreatedAt,
+			Username:  u.Username,
+			Email:     u.Email,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Role:      u.Role,
+		},
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Created User", "data": UserResponse})
+	return c.JSON(UserResponse)
 
 }
 
+// GetUser godoc
+// @Summary Get User
+// @Description Get the user Data, when passing your JWT-Token in the Heeader
+// @Tags User
+// @Security BearerAuth
+// @Success 200 {object} dto.UserResponse
+// @Router /user [get]
 func GetUser(c *fiber.Ctx) error {
 	token := c.Locals("user").(*jwt.Token)
 	userID := utils.GetUserIDFromToken(token)
@@ -57,15 +100,20 @@ func GetUser(c *fiber.Ctx) error {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	data := dto.UserResponse{
-		ID:        user.ID,
-		CreatedAt: user.CreatedAt,
-		Username:  user.Username,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Role:      user.Role,
+
+	response := dto.UserResponse{
+		Status:  "success",
+		Message: "Get User",
+		Data: dto.Data{
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			Username:  user.Username,
+			Email:     user.Email,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+		},
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Get User", "data": data})
+	return c.JSON(response)
 }

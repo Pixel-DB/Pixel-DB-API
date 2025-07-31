@@ -135,6 +135,15 @@ func GetPixelArt(c *fiber.Ctx) error {
 	})
 }
 
+// GetPixelArtPicture godoc
+// @Summary Get PixelArt
+// @Description  Returns the image for a specific pixel art by ID
+// @Tags PixelArt
+// @Param        pixelArtID   path      string  true  "PixelArt ID"
+// @Produce jpeg,png
+// @Success      200  {file}    file
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /pixelart/{pixelArtID}/picture [get]
 func GetPixelArtPicture(c *fiber.Ctx) error {
 
 	// get Pixel Art ID from params
@@ -151,17 +160,22 @@ func GetPixelArtPicture(c *fiber.Ctx) error {
 	// INit Minio
 	minioClient, err := utils.InitMinioClient()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to initialize storage service",
-			"error":   err.Error(),
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to initialize storage service",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	//
 	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), p.Filename, minio.GetObjectOptions{})
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to get pixel art from storage service"})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to get pixel art from storage service",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	ext := strings.ToLower(strings.TrimPrefix(path.Ext(p.Filename), ".")) //To Lower, Cut ".", get Ext
