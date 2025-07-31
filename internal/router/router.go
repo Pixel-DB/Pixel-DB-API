@@ -5,12 +5,14 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
 )
 
 func SetupRouter(app *fiber.App) {
 
-	app.Get("/swagger/*", swagger.HandlerDefault) //Docs Route (Swagger-API)
+	app.Get("/swagger/*", swagger.HandlerDefault)                                  //Docs Route (Swagger-API)
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "PixelDB-Server Info"})) //Server Monitor
 
 	api := app.Group("/", logger.New()) //Main Route
 	api.Get("/", handler.Hello)

@@ -184,8 +184,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Message": {
-                    "type": "string",
-                    "example": "Success"
+                    "type": "string"
                 },
                 "Status": {
                     "type": "string",

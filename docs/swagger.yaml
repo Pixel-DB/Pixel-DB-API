@@ -30,7 +30,6 @@ definitions:
       Error:
         type: string
       Message:
-        example: Success
         type: string
       Status:
         example: Error
