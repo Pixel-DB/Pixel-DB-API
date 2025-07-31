@@ -17,6 +17,10 @@ import (
 // @contact.email lukas.haible@web.de
 // @host localhost:3000
 // @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	app := fiber.New()
 

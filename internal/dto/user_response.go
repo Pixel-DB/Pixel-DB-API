@@ -2,12 +2,18 @@ package dto
 
 import "time"
 
+type Data struct {
+	ID        string    `json:"ID"`
+	CreatedAt time.Time `json:"CreatedAt"`
+	Email     string    `json:"Email"`
+	FirstName string    `json:"FirstName"`
+	LastName  string    `json:"LastName"`
+	Username  string    `json:"Username"`
+	Role      string    `json:"Role"`
+}
+
 type UserResponse struct {
-	ID        string
-	CreatedAt time.Time
-	Username  string
-	Email     string
-	FirstName string
-	LastName  string
-	Role      string
+	Status  string `json:"Status" example:"Success"`
+	Message string `json:"Message" example:"Created User"`
+	Data    Data   `json:"Data"`
 }

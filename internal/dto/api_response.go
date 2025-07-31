@@ -3,5 +3,5 @@ package dto
 type APIResponse struct {
 	Status  string
 	Message string
-	Data    string
+	Data    any
 }

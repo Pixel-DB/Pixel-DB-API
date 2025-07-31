@@ -2,11 +2,76 @@ basePath: /
 definitions:
   dto.APIResponse:
     properties:
-      data:
-        type: string
+      data: {}
       message:
         type: string
       status:
+        type: string
+    type: object
+  dto.Data:
+    properties:
+      CreatedAt:
+        type: string
+      Email:
+        type: string
+      FirstName:
+        type: string
+      ID:
+        type: string
+      LastName:
+        type: string
+      Role:
+        type: string
+      Username:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    properties:
+      Error:
+        type: string
+      Message:
+        example: Success
+        type: string
+      Status:
+        example: Error
+        type: string
+    type: object
+  dto.UserRequest:
+    properties:
+      email:
+        type: string
+      firstName:
+        maxLength: 20
+        minLength: 2
+        type: string
+      lastName:
+        maxLength: 20
+        minLength: 2
+        type: string
+      password:
+        maxLength: 70
+        minLength: 6
+        type: string
+      username:
+        maxLength: 20
+        minLength: 3
+        type: string
+    required:
+    - email
+    - firstName
+    - lastName
+    - password
+    - username
+    type: object
+  dto.UserResponse:
+    properties:
+      Data:
+        $ref: '#/definitions/dto.Data'
+      Message:
+        example: Created User
+        type: string
+      Status:
+        example: Success
         type: string
     type: object
 host: localhost:3000
@@ -30,4 +95,53 @@ paths:
       summary: Hello
       tags:
       - Base
+  /user:
+    get:
+      description: Get the user Data, when passing your JWT-Token in the Heeader
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+      security:
+      - BearerAuth: []
+      summary: Get User
+      tags:
+      - User
+    post:
+      description: Creates a new user account by accepting user details such as username,
+        email, password, firstname and lastname.
+      parameters:
+      - description: User Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create User
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
