@@ -5,9 +5,12 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
 )
 
 func SetupRouter(app *fiber.App) {
+
+	app.Get("/swagger/*", swagger.HandlerDefault) //Docs Route (Swagger-API)
 
 	api := app.Group("/", logger.New()) //Main Route
 	api.Get("/", handler.Hello)

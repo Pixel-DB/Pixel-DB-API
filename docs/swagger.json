@@ -1,0 +1,26 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Pixel-BD is an open-source online platform where anyone can upload, share, and showcase their pixel art creations with the community.",
+        "title": "PixelDB",
+        "contact": {
+            "name": "Lukas Haible",
+            "email": "lukas.haible@web.de"
+        },
+        "version": "0.1"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "paths": {
+        "/": {
+            "get": {
+                "description": "This is the base route. You can check, if the API is online.",
+                "tags": [
+                    "Base"
+                ],
+                "summary": "Hello",
+                "responses": {}
+            }
+        }
+    }
+}

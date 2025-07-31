@@ -1,15 +1,22 @@
 package main
 
 import (
-	"log"
-
 	"github.com/Pixel-DB/Pixel-DB-API/config"
+	_ "github.com/Pixel-DB/Pixel-DB-API/docs"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/router"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"log"
 )
 
+// @title PixelDB
+// @version 0.1
+// @description Pixel-BD is an open-source online platform where anyone can upload, share, and showcase their pixel art creations with the community.
+// @contact.name Lukas Haible
+// @contact.email lukas.haible@web.de
+// @host localhost:3000
+// @BasePath /
 func main() {
 	app := fiber.New()
 
