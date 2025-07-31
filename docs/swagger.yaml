@@ -1,4 +1,14 @@
 basePath: /
+definitions:
+  dto.APIResponse:
+    properties:
+      data:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
 host: localhost:3000
 info:
   contact:
@@ -12,7 +22,11 @@ paths:
   /:
     get:
       description: This is the base route. You can check, if the API is online.
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.APIResponse'
       summary: Hello
       tags:
       - Base

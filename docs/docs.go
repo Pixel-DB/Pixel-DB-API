@@ -25,7 +25,30 @@ const docTemplate = `{
                     "Base"
                 ],
                 "summary": "Hello",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.APIResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.APIResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
             }
         }
     }
