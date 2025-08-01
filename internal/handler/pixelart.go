@@ -135,6 +135,14 @@ func GetPixelArt(c *fiber.Ctx) error {
 	})
 }
 
+// GetPixelArtPicture godoc
+// @Summary Get PixelArt
+// @Description  Returns the image for a specific pixel art by ID
+// @Tags PixelArt
+// @Param        pixelArtID   path      string  true  "PixelArt ID"
+// @Produce jpeg,png
+// @Success      200  {file}    file
+// @Router /pixelart/{pixelArtID}/picture [get]
 func GetPixelArtPicture(c *fiber.Ctx) error {
 
 	// get Pixel Art ID from params
@@ -158,7 +166,6 @@ func GetPixelArtPicture(c *fiber.Ctx) error {
 		})
 	}
 
-	//
 	object, err := minioClient.GetObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), p.Filename, minio.GetObjectOptions{})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to get pixel art from storage service"})

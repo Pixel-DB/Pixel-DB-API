@@ -95,6 +95,26 @@ paths:
       summary: Hello
       tags:
       - Base
+  /pixelart/{pixelArtID}/picture:
+    get:
+      description: Returns the image for a specific pixel art by ID
+      parameters:
+      - description: PixelArt ID
+        in: path
+        name: pixelArtID
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      - image/png
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      summary: Get PixelArt
+      tags:
+      - PixelArt
   /user:
     get:
       description: Get the user Data, when passing your JWT-Token in the Heeader

@@ -35,6 +35,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/pixelart/{pixelArtID}/picture": {
+            "get": {
+                "description": "Returns the image for a specific pixel art by ID",
+                "produces": [
+                    "image/jpeg",
+                    "image/png"
+                ],
+                "tags": [
+                    "PixelArt"
+                ],
+                "summary": "Get PixelArt",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PixelArt ID",
+                        "name": "pixelArtID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/user": {
             "get": {
                 "security": [
