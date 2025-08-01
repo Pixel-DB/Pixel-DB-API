@@ -61,6 +61,12 @@ const docTemplate = `{
                         "schema": {
                             "type": "file"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
                     }
                 }
             }
