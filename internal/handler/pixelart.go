@@ -19,6 +19,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// UploadPixelArt godoc
+// @Summary      Upload PixelArt
+// @Description  Returns a paginated list of pixel art
+// @Tags         PixelArt
+// @Security BearerAuth
+// @Param        pixelart formData  file false "PixelArt-File"
+// @consume json
+// @Success 200 {object} dto.UploadFileResponse
+// @Router /pixelart [post]
 func UploadPixelArt(c *fiber.Ctx) error {
 
 	//Get user info from JWT token
@@ -126,6 +135,14 @@ func GetAllPixelArts(c *fiber.Ctx) error {
 	})
 }
 
+// GetPixelArt godoc
+// @Summary Get PixelArt
+// @Description  Returns the infos for a specific pixel art by ID
+// @Tags PixelArt
+// @Param        pixelArtID   path      string  true  "PixelArt ID"
+// @Success      200  {file}    file
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /pixelart/{pixelArtID} [get]
 func GetPixelArt(c *fiber.Ctx) error {
 	//Single Pixel Art DB entry
 	pixelArtID := c.Params("pixelArtID")
@@ -144,7 +161,7 @@ func GetPixelArt(c *fiber.Ctx) error {
 }
 
 // GetPixelArtPicture godoc
-// @Summary Get PixelArt
+// @Summary Get PixelArt Picture
 // @Description  Returns the image for a specific pixel art by ID
 // @Tags PixelArt
 // @Param        pixelArtID   path      string  true  "PixelArt ID"

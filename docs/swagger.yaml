@@ -35,6 +35,26 @@ definitions:
         example: Error
         type: string
     type: object
+  dto.UploadFileResponse:
+    properties:
+      createdAt:
+        type: string
+      filename:
+        type: string
+      id:
+        type: string
+      oldFilename:
+        type: string
+      ownerID:
+        type: string
+      ownerUsername:
+        type: string
+      pixelArtSize:
+        format: int64
+        type: integer
+      pixelArtURL:
+        type: string
+    type: object
   dto.UserRequest:
     properties:
       email:
@@ -94,6 +114,68 @@ paths:
       summary: Hello
       tags:
       - Base
+  /pixelart:
+    get:
+      consumes:
+      - application/json
+      description: Returns a paginated list of pixel art
+      parameters:
+      - description: Size of each Page
+        in: query
+        name: size
+        type: integer
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.APIResponse'
+      summary: Get pixel art list
+      tags:
+      - PixelArt
+    post:
+      description: Returns a paginated list of pixel art
+      parameters:
+      - description: PixelArt-File
+        in: formData
+        name: pixelart
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UploadFileResponse'
+      security:
+      - BearerAuth: []
+      summary: Upload PixelArt
+      tags:
+      - PixelArt
+  /pixelart/{pixelArtID}:
+    get:
+      description: Returns the infos for a specific pixel art by ID
+      parameters:
+      - description: PixelArt ID
+        in: path
+        name: pixelArtID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get PixelArt
+      tags:
+      - PixelArt
   /pixelart/{pixelArtID}/picture:
     get:
       description: Returns the image for a specific pixel art by ID
@@ -115,7 +197,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
-      summary: Get PixelArt
+      summary: Get PixelArt Picture
       tags:
       - PixelArt
   /user:
