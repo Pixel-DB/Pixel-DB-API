@@ -8,6 +8,19 @@ definitions:
       status:
         type: string
     type: object
+  dto.AuthResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      role:
+        type: string
+      token:
+        type: string
+      username:
+        type: string
+    type: object
   dto.Data:
     properties:
       CreatedAt:
@@ -33,6 +46,13 @@ definitions:
         type: string
       Status:
         example: Error
+        type: string
+    type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
         type: string
     type: object
   dto.UploadFileResponse:
@@ -114,6 +134,24 @@ paths:
       summary: Hello
       tags:
       - Base
+  /auth/login:
+    post:
+      description: Login with your credentials, to get your User Data and your JWT-Token
+      parameters:
+      - description: Login Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthResponse'
+      summary: Login
+      tags:
+      - Auth
   /pixelart:
     get:
       consumes:
