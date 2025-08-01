@@ -105,20 +105,28 @@ func UploadPixelArt(c *fiber.Ctx) error {
 
 }
 
-func GetPixelArt(c *fiber.Ctx) error {
-
+// GetAllPixelArts godoc
+// @Summary      Get pixel art list
+// @Description  Returns a paginated list of pixel art
+// @Tags         PixelArt
+// @Accept       json
+// @Produce      json
+// @Param        size  query     int  false  "Size of each Page"
+// @Param        page  query     int  false  "Page number for pagination"
+// @Success      200   {object}   dto.APIResponse
+// @Router       /pixelart [get]
+func GetAllPixelArts(c *fiber.Ctx) error {
 	//All Pixel Arts with Pagination
-	if c.Params("pixelArtID") == "" {
-		var pixelArts []model.PixelArts
-		pg := paginate.New()
+	var pixelArts []model.PixelArts
+	pg := paginate.New()
+	res := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
 
-		res := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
+	return c.JSON(fiber.Map{
+		"data": res,
+	})
+}
 
-		return c.JSON(fiber.Map{
-			"data": res,
-		})
-	}
-
+func GetPixelArt(c *fiber.Ctx) error {
 	//Single Pixel Art DB entry
 	pixelArtID := c.Params("pixelArtID")
 	p := new(model.PixelArts)
@@ -182,5 +190,4 @@ func GetPixelArtPicture(c *fiber.Ctx) error {
 	c.Set("Content-Type", "image/"+ext)
 
 	return c.SendStream(object)
-
 }
