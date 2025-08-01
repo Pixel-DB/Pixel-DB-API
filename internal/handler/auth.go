@@ -7,12 +7,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Login godoc
+// @Summary Login
+// @Description Login with your credentials, to get your User Data and your JWT-Token
+// @Tags Auth
+// @Param        credentials  body  dto.LoginRequest true  "Login Credentials"
+// @consume json
+// @Success 200 {object} dto.AuthResponse
+// @Router /auth/login [post]
 func Login(c *fiber.Ctx) error {
-	type LoginInput struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	input := new(LoginInput)
+	input := new(dto.LoginRequest)
 
 	if err := c.BodyParser(input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Invalid request", "data": nil})

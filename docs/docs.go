@@ -35,6 +35,131 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/login": {
+            "post": {
+                "description": "Login with your credentials, to get your User Data and your JWT-Token",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login Credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pixelart": {
+            "get": {
+                "description": "Returns a paginated list of pixel art",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PixelArt"
+                ],
+                "summary": "Get pixel art list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Size of each Page",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.APIResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns a paginated list of pixel art",
+                "tags": [
+                    "PixelArt"
+                ],
+                "summary": "Upload PixelArt",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "PixelArt-File",
+                        "name": "pixelart",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UploadFileResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pixelart/{pixelArtID}": {
+            "get": {
+                "description": "Returns the infos for a specific pixel art by ID",
+                "tags": [
+                    "PixelArt"
+                ],
+                "summary": "Get PixelArt",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PixelArt ID",
+                        "name": "pixelArtID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/pixelart/{pixelArtID}/picture": {
             "get": {
                 "description": "Returns the image for a specific pixel art by ID",
@@ -45,7 +170,7 @@ const docTemplate = `{
                 "tags": [
                     "PixelArt"
                 ],
-                "summary": "Get PixelArt",
+                "summary": "Get PixelArt Picture",
                 "parameters": [
                     {
                         "type": "string",
@@ -151,6 +276,26 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.Data": {
             "type": "object",
             "properties": {
@@ -184,12 +329,52 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "Message": {
-                    "type": "string",
-                    "example": "Success"
+                    "type": "string"
                 },
                 "Status": {
                     "type": "string",
                     "example": "Error"
+                }
+            }
+        },
+        "dto.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UploadFileResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "oldFilename": {
+                    "type": "string"
+                },
+                "ownerID": {
+                    "type": "string"
+                },
+                "ownerUsername": {
+                    "type": "string"
+                },
+                "pixelArtSize": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "pixelArtURL": {
+                    "type": "string"
                 }
             }
         },
