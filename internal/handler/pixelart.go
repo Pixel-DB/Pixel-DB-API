@@ -191,7 +191,7 @@ func GetPixelArt(c *fiber.Ctx) error {
 // @Description  Returns the image for a specific pixel art by ID
 // @Tags PixelArt
 // @Param        pixelArtID   path      string  true  "PixelArt ID"
-// @Produce jpeg,png
+// @Produce png
 // @Success      200  {file}    file
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /pixelart/{pixelArtID}/picture [get]
