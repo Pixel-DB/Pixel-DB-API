@@ -71,6 +71,16 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
+	ext := strings.ToLower(strings.TrimPrefix(path.Ext(file.Filename), ".")) //To Lower, Cut ".", get Ext
+	if ext != "png" {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "FileExtension",
+			Error:   "The uploaded file is not a PNG-File",
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
 	// Initialize MinIO client
 	minioClient, err := utils.InitMinioClient()
 	if err != nil {
@@ -221,8 +231,7 @@ func GetPixelArtPicture(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	ext := strings.ToLower(strings.TrimPrefix(path.Ext(p.Filename), ".")) //To Lower, Cut ".", get Ext
-	c.Set("Content-Type", "image/"+ext)
+	c.Set("Content-Type", "image/png")
 
 	return c.SendStream(object)
 }
