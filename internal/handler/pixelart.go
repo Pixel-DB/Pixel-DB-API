@@ -142,11 +142,15 @@ func GetAllPixelArts(c *fiber.Ctx) error {
 	//All Pixel Arts with Pagination
 	var pixelArts []model.PixelArts
 	pg := paginate.New()
-	res := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
+	data := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
 
-	return c.JSON(fiber.Map{
-		"data": res,
-	})
+	response := dto.APIResponse{
+		Status:  "Success",
+		Message: "",
+		Data:    data,
+	}
+
+	return c.JSON(response)
 }
 
 // GetPixelArt godoc
