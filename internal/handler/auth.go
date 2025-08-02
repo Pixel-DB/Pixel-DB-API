@@ -4,6 +4,7 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/security"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -20,6 +21,16 @@ func Login(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Invalid request", "data": nil})
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(input); err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Validation Error. Check Request.",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
 	userModel, err := utils.GetUserEmail(input.Email)
