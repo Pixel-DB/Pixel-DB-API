@@ -3,9 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"path"
-	"strings"
-
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -71,6 +68,16 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
+	ext := utils.GetExt(file.Filename)
+	if ext != "png" {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "FileExtension",
+			Error:   "The uploaded file is not a PNG-File",
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
 	// Initialize MinIO client
 	minioClient, err := utils.InitMinioClient()
 	if err != nil {
@@ -121,6 +128,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			OwnerUsername: user.Username,
 			Filename:      newFileName,
 			OldFilename:   file.Filename,
+			FileExtension: ext,
 			PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
 			PixelArtSize:  file.Size,
 		},
@@ -183,7 +191,7 @@ func GetPixelArt(c *fiber.Ctx) error {
 // @Description  Returns the image for a specific pixel art by ID
 // @Tags PixelArt
 // @Param        pixelArtID   path      string  true  "PixelArt ID"
-// @Produce jpeg,png
+// @Produce png
 // @Success      200  {file}    file
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /pixelart/{pixelArtID}/picture [get]
@@ -221,8 +229,7 @@ func GetPixelArtPicture(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	ext := strings.ToLower(strings.TrimPrefix(path.Ext(p.Filename), ".")) //To Lower, Cut ".", get Ext
-	c.Set("Content-Type", "image/"+ext)
+	c.Set("Content-Type", "image/png")
 
 	return c.SendStream(object)
 }
