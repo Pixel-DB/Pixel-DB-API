@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
@@ -71,7 +70,7 @@ func CreateUser(c *fiber.Ctx) error {
 	UserResponse := dto.UserResponse{
 		Status:  "Success",
 		Message: "Created User",
-		Data: dto.Data{
+		Data: dto.UserData{
 			ID:        u.ID,
 			CreatedAt: u.CreatedAt,
 			Username:  u.Username,
@@ -98,13 +97,18 @@ func GetUser(c *fiber.Ctx) error {
 	userID := utils.GetUserIDFromToken(token)
 	user, err := utils.GetUser(userID)
 	if err != nil {
-		fmt.Println(err.Error())
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Can't fetch User",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
 	response := dto.UserResponse{
 		Status:  "success",
 		Message: "Get User",
-		Data: dto.Data{
+		Data: dto.UserData{
 			ID:        user.ID,
 			CreatedAt: user.CreatedAt,
 			Username:  user.Username,

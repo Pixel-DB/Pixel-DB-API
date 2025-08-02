@@ -19,11 +19,16 @@ import (
 func Login(c *fiber.Ctx) error {
 	input := new(dto.LoginRequest)
 
-	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Invalid request", "data": nil})
+	if err := c.BodyParser(input); err != nil { //Check Request Body
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid Request",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
-	validate := validator.New()
+	validate := validator.New() //Validate if Email, ...
 	if err := validate.Struct(input); err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
@@ -33,25 +38,44 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
-	userModel, err := utils.GetUserEmail(input.Email)
+	userModel, err := utils.GetUserEmail(input.Email) //Check if user is in DB
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Error finding user", "data": nil})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Error finding user",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	if userModel == nil {
 		dummyHash := "$2a$14$ajq8Q7fbtFRQvXpdCq7Jcuy.Rx1h/L4J60Otx.gyNLbAYctGMJ9tK" //Hash something for Timing Attacks protection
 		security.CheckPasswordHash(dummyHash, input.Password)
-
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid Email or Password", "data": nil})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid Email or Password",
+			Error:   "",
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
 	if !security.CheckPasswordHash(userModel.Password, input.Password) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid Email or Password", "data": nil})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid Email or Password",
+			Error:   "",
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
 	token, err := utils.GenerateToken(userModel.ID, userModel.Email, userModel.Username)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Error Signing Token", "data": err.Error()})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid Email or Password",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
 	AuthResponse := dto.AuthResponse{

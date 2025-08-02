@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type Data struct {
+type UserData struct {
 	ID        string    `json:"ID"`
 	CreatedAt time.Time `json:"CreatedAt"`
 	Email     string    `json:"Email"`
@@ -13,7 +13,7 @@ type Data struct {
 }
 
 type UserResponse struct {
-	Status  string `json:"Status" example:"Success"`
-	Message string `json:"Message" example:"Created User"`
-	Data    Data   `json:"Data"`
+	Status  string   `json:"Status" example:"Success"`
+	Message string   `json:"Message" example:"Created User"`
+	Data    UserData `json:"Data"`
 }

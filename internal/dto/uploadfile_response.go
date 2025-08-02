@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type UploadFileResponse struct {
+type UploadData struct {
 	ID            string
 	OwnerUsername string
 	OwnerID       string
@@ -11,4 +11,10 @@ type UploadFileResponse struct {
 	CreatedAt     time.Time
 	Filename      string
 	OldFilename   string
+}
+
+type UploadFileResponse struct {
+	Status  string
+	Message string
+	Data    UploadData
 }

@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"fmt"
 	"path"
 	"strings"
 
@@ -35,40 +34,52 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	userID := utils.GetUserIDFromToken(token)
 	user, err := utils.GetUser(userID)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Invalid user credentials",
-			"error":   err.Error(),
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid user credentials",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
 	file, err := c.FormFile("pixelart") //Get file from passed Data
 	if err != nil {
-		fmt.Println(err.Error())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to upload the file",
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to get the PixelArt-File",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	fileContent, err := file.Open() //Open file
 	if err != nil {
-		fmt.Println(err.Error())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to open uploaded file",
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to open the PixelArt-File",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
-	defer fileContent.Close()
+
+	if err := fileContent.Close(); err != nil { //Close File
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to close the PixelArt-File",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
 
 	// Initialize MinIO client
 	minioClient, err := utils.InitMinioClient()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to initialize storage service",
-			"error":   err.Error(),
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to initialize storage service",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	newFileName := utils.GenerateFilename(file.Filename, user.Username)
@@ -77,41 +88,44 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	pixelArts := &model.PixelArts{
 		OwnerID:  user.ID,
 		Filename: newFileName,
+		URL:      "https://place-holder-url.com",
 	}
-
 	if err := database.DB.Create(pixelArts).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to create database record",
-			"error":   err.Error(),
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to create database record",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	//Upload file to MinIO
 	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFileName, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
-		fmt.Println(err.Error())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Failed to upload file to S3-Service",
-		})
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Failed to upload to storage service",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	// Create API response data
-	data := dto.UploadFileResponse{
-		ID:            pixelArts.ID,
-		CreatedAt:     pixelArts.CreatedAt,
-		OwnerID:       user.ID,
-		OwnerUsername: user.Username,
-		Filename:      newFileName,
-		OldFilename:   file.Filename,
-		PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
-		PixelArtSize:  file.Size,
+	ResponseData := dto.UploadFileResponse{
+		Status:  "Success",
+		Message: "Uploaded PixelArt-File",
+		Data: dto.UploadData{
+			ID:            pixelArts.ID,
+			CreatedAt:     pixelArts.CreatedAt,
+			OwnerID:       user.ID,
+			OwnerUsername: user.Username,
+			Filename:      newFileName,
+			OldFilename:   file.Filename,
+			PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
+			PixelArtSize:  file.Size,
+		},
 	}
-	fmt.Println(user.ID, user.Email)
-
-	return c.JSON(fiber.Map{"status": "success", "message": "Uploaded the File", "data": data})
-
+	return c.JSON(ResponseData)
 }
 
 // GetAllPixelArts godoc
@@ -128,11 +142,15 @@ func GetAllPixelArts(c *fiber.Ctx) error {
 	//All Pixel Arts with Pagination
 	var pixelArts []model.PixelArts
 	pg := paginate.New()
-	res := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
+	data := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
 
-	return c.JSON(fiber.Map{
-		"data": res,
-	})
+	response := dto.APIResponse{
+		Status:  "Success",
+		Message: "",
+		Data:    data,
+	}
+
+	return c.JSON(response)
 }
 
 // GetPixelArt godoc
