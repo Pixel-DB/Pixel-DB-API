@@ -54,7 +54,7 @@ func Login(c *fiber.Ctx) error {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
 			Message: "Invalid Email or Password",
-			Error:   err.Error(),
+			Error:   "",
 		}
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
@@ -63,7 +63,7 @@ func Login(c *fiber.Ctx) error {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
 			Message: "Invalid Email or Password",
-			Error:   err.Error(),
+			Error:   "",
 		}
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
