@@ -128,6 +128,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			OwnerUsername: user.Username,
 			Filename:      newFileName,
 			OldFilename:   file.Filename,
+			FileExtension: ext,
 			PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
 			PixelArtSize:  file.Size,
 		},

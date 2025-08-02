@@ -11,6 +11,7 @@ type UploadData struct {
 	CreatedAt     time.Time
 	Filename      string
 	OldFilename   string
+	FileExtension string
 }
 
 type UploadFileResponse struct {
