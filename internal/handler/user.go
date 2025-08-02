@@ -104,7 +104,7 @@ func GetUser(c *fiber.Ctx) error {
 	response := dto.UserResponse{
 		Status:  "success",
 		Message: "Get User",
-		Data: dto.Data{
+		Data: dto.UserData{
 			ID:        user.ID,
 			CreatedAt: user.CreatedAt,
 			Username:  user.Username,
