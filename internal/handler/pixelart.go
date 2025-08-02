@@ -3,9 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"path"
-	"strings"
-
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -71,7 +68,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	ext := strings.ToLower(strings.TrimPrefix(path.Ext(file.Filename), ".")) //To Lower, Cut ".", get Ext
+	ext := utils.GetExt(file.Filename)
 	if ext != "png" {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
