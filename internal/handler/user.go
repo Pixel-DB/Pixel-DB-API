@@ -71,7 +71,7 @@ func CreateUser(c *fiber.Ctx) error {
 	UserResponse := dto.UserResponse{
 		Status:  "Success",
 		Message: "Created User",
-		Data: dto.Data{
+		Data: dto.UserData{
 			ID:        u.ID,
 			CreatedAt: u.CreatedAt,
 			Username:  u.Username,
