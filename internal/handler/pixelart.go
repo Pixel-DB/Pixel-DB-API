@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"errors"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -12,7 +11,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/minio/minio-go/v7"
 	"github.com/morkid/paginate"
-	"gorm.io/gorm"
 )
 
 // UploadPixelArt godoc
@@ -175,15 +173,20 @@ func GetPixelArt(c *fiber.Ctx) error {
 	p := new(model.PixelArts)
 	db := database.DB
 	if err := db.Where(&model.PixelArts{ID: pixelArtID}).First(p).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Can't find PixelArt",
+			Error:   err.Error(),
 		}
-		return nil
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
-	return c.JSON(fiber.Map{
-		"status": "success",
-		"data":   p,
-	})
+
+	response := dto.APIResponse{
+		Status:  "Success",
+		Message: "",
+		Data:    p,
+	}
+	return c.JSON(response)
 }
 
 // GetPixelArtPicture godoc
@@ -202,10 +205,12 @@ func GetPixelArtPicture(c *fiber.Ctx) error {
 	p := new(model.PixelArts)
 	db := database.DB
 	if err := db.Where(&model.PixelArts{ID: pixelArtID}).First(p).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Can't find PixelArt",
+			Error:   err.Error(),
 		}
-		return nil
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	// INit Minio
