@@ -164,7 +164,6 @@ const docTemplate = `{
             "get": {
                 "description": "Returns the image for a specific pixel art by ID",
                 "produces": [
-                    "image/jpeg",
                     "image/png"
                 ],
                 "tags": [
@@ -296,32 +295,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.Data": {
-            "type": "object",
-            "properties": {
-                "CreatedAt": {
-                    "type": "string"
-                },
-                "Email": {
-                    "type": "string"
-                },
-                "FirstName": {
-                    "type": "string"
-                },
-                "ID": {
-                    "type": "string"
-                },
-                "LastName": {
-                    "type": "string"
-                },
-                "Role": {
-                    "type": "string"
-                },
-                "Username": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -339,19 +312,28 @@ const docTemplate = `{
         },
         "dto.LoginRequest": {
             "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 70,
+                    "minLength": 6
                 }
             }
         },
-        "dto.UploadFileResponse": {
+        "dto.UploadData": {
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "string"
+                },
+                "fileExtension": {
                     "type": "string"
                 },
                 "filename": {
@@ -374,6 +356,46 @@ const docTemplate = `{
                     "format": "int64"
                 },
                 "pixelArtURL": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UploadFileResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.UploadData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserData": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FirstName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "LastName": {
+                    "type": "string"
+                },
+                "Role": {
+                    "type": "string"
+                },
+                "Username": {
                     "type": "string"
                 }
             }
@@ -417,7 +439,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "Data": {
-                    "$ref": "#/definitions/dto.Data"
+                    "$ref": "#/definitions/dto.UserData"
                 },
                 "Message": {
                     "type": "string",
