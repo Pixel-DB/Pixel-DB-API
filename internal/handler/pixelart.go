@@ -15,11 +15,6 @@ import (
 	"github.com/morkid/paginate"
 )
 
-type MetaData struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
 // UploadPixelArt godoc
 // @Summary      Upload PixelArt
 // @Description  Returns a paginated list of pixel art
@@ -55,12 +50,12 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	metaField := c.FormValue("meta")
-	var meta MetaData
+	var meta dto.UploadFileRequest
 	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid JSON in 'meta' field")
 	}
-	fmt.Println(meta.Name)
-	fmt.Println(meta.Email)
+	fmt.Println(meta.PixelArtName)
+	fmt.Println(meta.PixelArtDescription)
 
 	fileContent, err := file.Open() //Open file
 	if err != nil {
