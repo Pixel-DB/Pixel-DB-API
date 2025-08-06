@@ -3,15 +3,17 @@ package dto
 import "time"
 
 type UploadData struct {
-	ID            string
-	OwnerUsername string
-	OwnerID       string
-	PixelArtURL   string
-	PixelArtSize  int64
-	CreatedAt     time.Time
-	Filename      string
-	OldFilename   string
-	FileExtension string
+	ID                 string
+	OwnerUsername      string
+	OwnerID            string
+	PixelArtURL        string
+	PixelArtSize       int64
+	CreatedAt          time.Time
+	Filename           string
+	OldFilename        string
+	FileExtension      string
+	PixelArtName       string
+	PixelArtDesciption string
 }
 
 type UploadFileResponse struct {

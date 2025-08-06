@@ -2,11 +2,13 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/minio/minio-go/v7"
@@ -45,6 +47,27 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			Error:   err.Error(),
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
+	metaField := c.FormValue("meta")
+	meta := new(dto.UploadFileRequest)
+	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid JSON in 'meta' field",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(meta); err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Validation Error. Check Request.",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
 	fileContent, err := file.Open() //Open file
@@ -91,9 +114,11 @@ func UploadPixelArt(c *fiber.Ctx) error {
 
 	//Save Data in DB
 	pixelArts := &model.PixelArts{
-		OwnerID:  user.ID,
-		Filename: newFileName,
-		URL:      "https://place-holder-url.com",
+		OwnerID:     user.ID,
+		Filename:    newFileName,
+		URL:         "https://place-holder-url.com",
+		Name:        meta.PixelArtName,
+		Description: meta.PixelArtDescription,
 	}
 	if err := database.DB.Create(pixelArts).Error; err != nil {
 		ErrorResponse := dto.ErrorResponse{
@@ -120,15 +145,17 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		Status:  "Success",
 		Message: "Uploaded PixelArt-File",
 		Data: dto.UploadData{
-			ID:            pixelArts.ID,
-			CreatedAt:     pixelArts.CreatedAt,
-			OwnerID:       user.ID,
-			OwnerUsername: user.Username,
-			Filename:      newFileName,
-			OldFilename:   file.Filename,
-			FileExtension: ext,
-			PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
-			PixelArtSize:  file.Size,
+			ID:                 pixelArts.ID,
+			CreatedAt:          pixelArts.CreatedAt,
+			OwnerID:            user.ID,
+			OwnerUsername:      user.Username,
+			Filename:           newFileName,
+			OldFilename:        file.Filename,
+			FileExtension:      ext,
+			PixelArtURL:        "placeholder-url.com", // Placeholder, cooming soon...
+			PixelArtSize:       file.Size,
+			PixelArtName:       meta.PixelArtName,
+			PixelArtDesciption: meta.PixelArtDescription,
 		},
 	}
 	return c.JSON(ResponseData)
