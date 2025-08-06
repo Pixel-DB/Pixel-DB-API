@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -12,6 +14,11 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/morkid/paginate"
 )
+
+type MetaData struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
 
 // UploadPixelArt godoc
 // @Summary      Upload PixelArt
@@ -47,15 +54,13 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	meta := c.FormValue("meta")
-	if meta == "" {
-		ErrorResponse := dto.ErrorResponse{
-			Status:  "Error",
-			Message: "No Pixelart-Name or Pixelart-description passed",
-			Error:   "",
-		}
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	metaField := c.FormValue("meta")
+	var meta MetaData
+	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid JSON in 'meta' field")
 	}
+	fmt.Println(meta.Name)
+	fmt.Println(meta.Email)
 
 	fileContent, err := file.Open() //Open file
 	if err != nil {
