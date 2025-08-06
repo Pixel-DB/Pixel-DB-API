@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -54,8 +53,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid JSON in 'meta' field")
 	}
-	fmt.Println(meta.PixelArtName)
-	fmt.Println(meta.PixelArtDescription)
 
 	fileContent, err := file.Open() //Open file
 	if err != nil {
@@ -101,9 +98,11 @@ func UploadPixelArt(c *fiber.Ctx) error {
 
 	//Save Data in DB
 	pixelArts := &model.PixelArts{
-		OwnerID:  user.ID,
-		Filename: newFileName,
-		URL:      "https://place-holder-url.com",
+		OwnerID:     user.ID,
+		Filename:    newFileName,
+		URL:         "https://place-holder-url.com",
+		Name:        meta.PixelArtName,
+		Description: meta.PixelArtDescription,
 	}
 	if err := database.DB.Create(pixelArts).Error; err != nil {
 		ErrorResponse := dto.ErrorResponse{
