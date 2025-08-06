@@ -8,6 +8,7 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/minio/minio-go/v7"
@@ -57,6 +58,16 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			Error:   err.Error(),
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(meta); err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Validation Error. Check Request.",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
 	fileContent, err := file.Open() //Open file
