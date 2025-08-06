@@ -129,15 +129,17 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		Status:  "Success",
 		Message: "Uploaded PixelArt-File",
 		Data: dto.UploadData{
-			ID:            pixelArts.ID,
-			CreatedAt:     pixelArts.CreatedAt,
-			OwnerID:       user.ID,
-			OwnerUsername: user.Username,
-			Filename:      newFileName,
-			OldFilename:   file.Filename,
-			FileExtension: ext,
-			PixelArtURL:   "placeholder-url.com", // Placeholder, cooming soon...
-			PixelArtSize:  file.Size,
+			ID:                 pixelArts.ID,
+			CreatedAt:          pixelArts.CreatedAt,
+			OwnerID:            user.ID,
+			OwnerUsername:      user.Username,
+			Filename:           newFileName,
+			OldFilename:        file.Filename,
+			FileExtension:      ext,
+			PixelArtURL:        "placeholder-url.com", // Placeholder, cooming soon...
+			PixelArtSize:       file.Size,
+			PixelArtName:       meta.PixelArtName,
+			PixelArtDesciption: meta.PixelArtDescription,
 		},
 	}
 	return c.JSON(ResponseData)
