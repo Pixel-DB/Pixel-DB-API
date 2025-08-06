@@ -50,7 +50,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	metaField := c.FormValue("meta")
-	var meta dto.UploadFileRequest
+	meta := new(dto.UploadFileRequest)
 	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",

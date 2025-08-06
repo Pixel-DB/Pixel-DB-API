@@ -1,6 +1,6 @@
 package dto
 
 type UploadFileRequest struct {
-	PixelArtName        string `json:"PixelArtName"`
-	PixelArtDescription string `json:"PixelArtDescription"`
+	PixelArtName        string `json:"PixelArtName" validate:"required,min=3,max=70"`
+	PixelArtDescription string `json:"PixelArtDescription" validate:"required,min=6,max=200"`
 }
