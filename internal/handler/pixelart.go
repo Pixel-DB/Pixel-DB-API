@@ -47,6 +47,16 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
+	meta := c.FormValue("meta")
+	if meta == "" {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "No Pixelart-Name or Pixelart-description passed",
+			Error:   "",
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
 	fileContent, err := file.Open() //Open file
 	if err != nil {
 		ErrorResponse := dto.ErrorResponse{
