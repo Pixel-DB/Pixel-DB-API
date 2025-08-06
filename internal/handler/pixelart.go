@@ -51,7 +51,12 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	metaField := c.FormValue("meta")
 	var meta dto.UploadFileRequest
 	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid JSON in 'meta' field")
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid JSON in 'meta' field",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
 	fileContent, err := file.Open() //Open file
