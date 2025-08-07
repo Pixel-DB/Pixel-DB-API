@@ -2,13 +2,15 @@
 
 # PixelDB API
 
+> This Service is still under production!!!
+
 Pixel-BD is an open-source online platform where anyone can upload, share, and showcase their pixel art creations with the community.
 
-This Repository for the API, below you can see the features and the Routes
+This is the Repository for the [API](https://github.com/pixel-db/pixel-db-web), below you can see the features and the Routes. The PixelDB-Web is [here](https://github.com/pixel-db/pixel-db-api)
 
 ## Documentation
 
-To access comprehensive API documentation, navigate to the `/swagger` endpoint. This interactive documentation provides detailed information about all available API endpoints, including required parameters, response formats, and authentication requirements. The Swagger UI allows you to test API calls directly from your browser.
+To access comprehensive API documentation, navigate to the <ins>BASEURL</ins>`/swagger` endpoint. This interactive documentation provides detailed information about all available API endpoints, including required parameters, response formats, and authentication requirements. The Swagger UI allows you to test API calls directly from your browser.
 
 ## Setup PixelDB with Docker
 
