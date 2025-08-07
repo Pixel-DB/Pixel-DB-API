@@ -59,6 +59,10 @@ definitions:
         type: string
       ownerUsername:
         type: string
+      pixelArtDesciption:
+        type: string
+      pixelArtName:
+        type: string
       pixelArtSize:
         format: int64
         type: integer

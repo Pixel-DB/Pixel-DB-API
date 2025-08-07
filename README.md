@@ -6,16 +6,9 @@ Pixel-BD is an open-source online platform where anyone can upload, share, and s
 
 This Repository for the API, below you can see the features and the Routes
 
-## API Endpoints
+## Documentation
 
-The following endpoints are available in the API (more cooming soon):
-
-- **POST /user**: Register a new user.
-- **POST /auth/login**: Authenticate a user and return a JWT.
-- **POST /pixelarts**: Uploads a Pixel art to the DB and the S3-Service (MinIO)
-- **GET /pixelarts/?size=10&page=0**: Loads Pixelarts from DB
-- **GET /pixelarts/:pixelartID**: Loads the Data from one specific Pixelart (Pass the ID)
-- **GET /pixelarts/:pixelartID/picture** Loads the Picture of the specified Pixelart (Pass the ID)
+To access comprehensive API documentation, navigate to the `/swagger` endpoint. This interactive documentation provides detailed information about all available API endpoints, including required parameters, response formats, and authentication requirements. The Swagger UI allows you to test API calls directly from your browser.
 
 ## Setup PixelDB with Docker
 
