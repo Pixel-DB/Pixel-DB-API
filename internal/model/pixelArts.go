@@ -15,6 +15,7 @@ type PixelArts struct {
 	Filename    string `validate:"required"`
 	Title       string `validate:"required"`
 	Description string `validate:"required"`
+	Tags        string
 }
 
 func (u *PixelArts) BeforeCreate(tx *gorm.DB) (err error) {
