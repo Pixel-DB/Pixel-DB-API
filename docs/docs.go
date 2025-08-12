@@ -351,6 +351,12 @@ const docTemplate = `{
                 "ownerUsername": {
                     "type": "string"
                 },
+                "pixelArtDesciption": {
+                    "type": "string"
+                },
+                "pixelArtName": {
+                    "type": "string"
+                },
                 "pixelArtSize": {
                     "type": "integer",
                     "format": "int64"
