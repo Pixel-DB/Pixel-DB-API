@@ -13,7 +13,7 @@ type PixelArts struct {
 	URL         string `validate:"required,url"`
 	OwnerID     string `validate:"required" gorm:"type:uuid;"`
 	Filename    string `validate:"required"`
-	Name        string `validate:"required"`
+	Title       string `validate:"required"`
 	Description string `validate:"required"`
 }
 

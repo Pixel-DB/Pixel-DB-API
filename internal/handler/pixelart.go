@@ -117,7 +117,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		OwnerID:     user.ID,
 		Filename:    newFileName,
 		URL:         "https://place-holder-url.com",
-		Name:        meta.PixelArtName,
+		Title:       meta.PixelArtTitle,
 		Description: meta.PixelArtDescription,
 	}
 	if err := database.DB.Create(pixelArts).Error; err != nil {
@@ -154,7 +154,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			FileExtension:      ext,
 			PixelArtURL:        "placeholder-url.com", // Placeholder, cooming soon...
 			PixelArtSize:       file.Size,
-			PixelArtName:       meta.PixelArtName,
+			PixelArtName:       meta.PixelArtTitle,
 			PixelArtDesciption: meta.PixelArtDescription,
 		},
 	}
