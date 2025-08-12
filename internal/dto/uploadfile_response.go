@@ -14,6 +14,7 @@ type UploadData struct {
 	FileExtension      string
 	PixelArtName       string
 	PixelArtDesciption string
+	PixelArtTags       string
 }
 
 type UploadFileResponse struct {
