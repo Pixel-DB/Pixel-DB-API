@@ -361,6 +361,9 @@ const docTemplate = `{
                     "type": "integer",
                     "format": "int64"
                 },
+                "pixelArtTags": {
+                    "type": "string"
+                },
                 "pixelArtURL": {
                     "type": "string"
                 }
