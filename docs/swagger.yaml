@@ -66,6 +66,8 @@ definitions:
       pixelArtSize:
         format: int64
         type: integer
+      pixelArtTags:
+        type: string
       pixelArtURL:
         type: string
     type: object
