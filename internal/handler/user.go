@@ -121,3 +121,13 @@ func GetUser(c *fiber.Ctx) error {
 
 	return c.JSON(response)
 }
+
+// UpdateUser godoc
+// @Summary Update User
+// @Description Update the User Data
+// @Tags User
+// @Success 200 {object} dto.UserResponse
+// @Router /user [patch]
+func UpdateUser(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{"Route": "Update User"})
+}
