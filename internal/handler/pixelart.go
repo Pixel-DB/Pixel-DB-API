@@ -119,7 +119,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		URL:         "https://place-holder-url.com",
 		Title:       meta.PixelArtTitle,
 		Description: meta.PixelArtDescription,
-		Tags:        meta.PixelArtTags,
 	}
 	if err := database.DB.Create(pixelArts).Error; err != nil {
 		ErrorResponse := dto.ErrorResponse{
@@ -157,7 +156,6 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			PixelArtSize:       file.Size,
 			PixelArtName:       meta.PixelArtTitle,
 			PixelArtDesciption: meta.PixelArtDescription,
-			PixelArtTags:       meta.PixelArtTags,
 		},
 	}
 	return c.JSON(ResponseData)

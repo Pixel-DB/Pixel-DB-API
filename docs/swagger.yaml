@@ -272,6 +272,16 @@ paths:
       summary: Get User
       tags:
       - User
+    patch:
+      description: Update the User Data
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+      summary: Update User
+      tags:
+      - User
     post:
       description: Creates a new user account by accepting user details such as username,
         email, password, firstname and lastname.

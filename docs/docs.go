@@ -259,6 +259,21 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Update the User Data",
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserResponse"
+                        }
+                    }
+                }
             }
         }
     },
