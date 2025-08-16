@@ -133,7 +133,9 @@ func GetUser(c *fiber.Ctx) error {
 func UpdateUser(c *fiber.Ctx) error {
 	db := database.DB
 	r := dto.UpdateUserRequest{}
-	c.BodyParser(&r)
+	if err := c.BodyParser(&r); err != nil {
+		return c.JSON(fiber.Map{"status": "Error"})
+	}
 
 	token := c.Locals("user").(*jwt.Token)
 	userID := utils.GetUserIDFromToken(token)
