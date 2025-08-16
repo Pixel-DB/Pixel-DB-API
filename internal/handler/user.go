@@ -126,8 +126,21 @@ func GetUser(c *fiber.Ctx) error {
 // @Summary Update User
 // @Description Update the User Data
 // @Tags User
+// @Security BearerAuth
 // @Success 200 {object} dto.UserResponse
 // @Router /user [patch]
 func UpdateUser(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"Route": "Update User"})
+	token := c.Locals("user").(*jwt.Token)
+	userID := utils.GetUserIDFromToken(token)
+	user, err := utils.GetUser(userID)
+	if err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Can't fetch User",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
+	}
+
+	return c.JSON(fiber.Map{"Token": token, "UserID": userID, "User": user})
 }
