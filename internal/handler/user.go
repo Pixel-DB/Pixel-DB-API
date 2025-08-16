@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
@@ -130,8 +131,42 @@ func GetUser(c *fiber.Ctx) error {
 // @Success 200 {object} dto.UserResponse
 // @Router /user [patch]
 func UpdateUser(c *fiber.Ctx) error {
+	db := database.DB
+	r := dto.UpdateUserRequest{}
+	c.BodyParser(&r)
+
 	token := c.Locals("user").(*jwt.Token)
 	userID := utils.GetUserIDFromToken(token)
+
+	updates := map[string]interface{}{}
+	if r.FirstName != "" {
+		updates["first_name"] = r.FirstName
+	}
+	if r.LastName != "" {
+		updates["last_name"] = r.LastName
+	}
+	if r.Email != "" {
+		updates["email"] = r.Email
+	}
+	if r.Username != "" {
+		updates["username"] = r.Username
+	}
+	if r.Password != "" {
+		hashedPassword, err := security.HashPassword(r.Password)
+		if err != nil {
+			ErrorResponse := dto.ErrorResponse{
+				Status:  "Error",
+				Message: "Couldn't Hash new Password",
+				Error:   err.Error(),
+			}
+			return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+		}
+		updates["password"] = hashedPassword
+	}
+
+	fmt.Println(updates)
+	db.Model(&model.Users{}).Where("id = ?", userID).Updates(updates)
+
 	user, err := utils.GetUser(userID)
 	if err != nil {
 		ErrorResponse := dto.ErrorResponse{
@@ -142,5 +177,5 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
-	return c.JSON(fiber.Map{"Token": token, "UserID": userID, "User": user})
+	return c.JSON(fiber.Map{"User": user, "Body": r})
 }
