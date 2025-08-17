@@ -12,9 +12,9 @@ import (
 // @Summary Login
 // @Description Login with your credentials, to get your User Data and your JWT-Token
 // @Tags Auth
-// @Param        credentials  body  dto.LoginRequest true  "Login Credentials"
+// @Param        credentials  body  dto.AuthLoginRequest true  "Login Credentials"
 // @consume json
-// @Success 200 {object} dto.AuthResponse
+// @Success 200 {object} dto.AuthLoginResponse
 // @Router /auth/login [post]
 func Login(c *fiber.Ctx) error {
 	r := new(dto.AuthLoginRequest)

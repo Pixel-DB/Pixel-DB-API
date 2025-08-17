@@ -8,17 +8,46 @@ definitions:
       status:
         type: string
     type: object
-  dto.AuthResponse:
+  dto.AuthLoginDataResponse:
+    properties:
+      CreatedAt:
+        type: string
+      Email:
+        type: string
+      FirstName:
+        type: string
+      ID:
+        type: string
+      LastName:
+        type: string
+      Role:
+        type: string
+      Username:
+        type: string
+    type: object
+  dto.AuthLoginRequest:
     properties:
       email:
         type: string
-      id:
+      password:
+        maxLength: 70
+        minLength: 6
         type: string
-      role:
+    required:
+    - email
+    - password
+    type: object
+  dto.AuthLoginResponse:
+    properties:
+      Data:
+        $ref: '#/definitions/dto.AuthLoginDataResponse'
+      Message:
+        example: Logged in
         type: string
-      token:
+      Status:
+        example: Success
         type: string
-      username:
+      Token:
         type: string
     type: object
   dto.ErrorResponse:
@@ -31,19 +60,7 @@ definitions:
         example: Error
         type: string
     type: object
-  dto.LoginRequest:
-    properties:
-      email:
-        type: string
-      password:
-        maxLength: 70
-        minLength: 6
-        type: string
-    required:
-    - email
-    - password
-    type: object
-  dto.UploadData:
+  dto.PixelArtUploadDataResponse:
     properties:
       createdAt:
         type: string
@@ -71,10 +88,10 @@ definitions:
       pixelArtURL:
         type: string
     type: object
-  dto.UploadFileResponse:
+  dto.PixelArtUploadResponse:
     properties:
       data:
-        $ref: '#/definitions/dto.UploadData'
+        $ref: '#/definitions/dto.PixelArtUploadDataResponse'
       message:
         type: string
       status:
@@ -219,12 +236,12 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/dto.LoginRequest'
+          $ref: '#/definitions/dto.AuthLoginRequest'
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.AuthResponse'
+            $ref: '#/definitions/dto.AuthLoginResponse'
       summary: Login
       tags:
       - Auth
@@ -263,7 +280,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.UploadFileResponse'
+            $ref: '#/definitions/dto.PixelArtUploadResponse'
       security:
       - BearerAuth: []
       summary: Upload PixelArt
