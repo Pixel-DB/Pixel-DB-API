@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
@@ -36,7 +37,7 @@ func CreateUser(c *fiber.Ctx) error {
 	if err := validate.Struct(r); err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
-			Message: "Validation Error. Check Request.-",
+			Message: "Validation Error. Check Request.",
 			Error:   err.Error(),
 		}
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
@@ -135,6 +136,16 @@ func UpdateUser(c *fiber.Ctx) error {
 	r := dto.UpdateUserRequest{}
 	if err := c.BodyParser(&r); err != nil {
 		return c.JSON(fiber.Map{"status": "Error"})
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(r); err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Validation Error. Check Request.",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
 	token := c.Locals("user").(*jwt.Token)
