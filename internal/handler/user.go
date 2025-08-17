@@ -17,16 +17,16 @@ import (
 // @Summary Create User
 // @Description Creates a new user account by accepting user details such as username, email, password, firstname and lastname.
 // @Tags User
-// @Param        credentials  body  dto.UserRequest true  "User Credentials"
+// @Param        credentials  body  dto.UserCreateRequest true  "User Credentials"
 // @consume json
-// @Success 200 {object} dto.UserResponse
+// @Success 200 {object} dto.UserCreateResponse
 // @Failure 409 {object} dto.ErrorResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /user [post]
 func CreateUser(c *fiber.Ctx) error {
 	u := new(model.Users)
-	r := dto.CreateUserRequest{}
+	r := dto.UserCreateRequest{}
 	db := database.DB
 
 	if err := c.BodyParser(&r); err != nil {
@@ -91,7 +91,7 @@ func CreateUser(c *fiber.Ctx) error {
 // @Description Get the user Data, when passing your JWT-Token in the Heeader
 // @Tags User
 // @Security BearerAuth
-// @Success 200 {object} dto.UserResponse
+// @Success 200 {object} dto.UserGetResponse
 // @Router /user [get]
 func GetUser(c *fiber.Ctx) error {
 	token := c.Locals("user").(*jwt.Token)
@@ -128,7 +128,7 @@ func GetUser(c *fiber.Ctx) error {
 // @Description Update the User Data
 // @Tags User
 // @Security BearerAuth
-// @Success 200 {object} dto.UserResponse
+// @Success 200 {object} dto.UserUpdateResponse
 // @Router /user [patch]
 func UpdateUser(c *fiber.Ctx) error {
 	db := database.DB

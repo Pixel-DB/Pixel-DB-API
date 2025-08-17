@@ -1,6 +1,6 @@
 package dto
 
-type CreateUserRequest struct {
+type UserCreateRequest struct {
 	Username  string `gorm:"uniqueIndex" json:"username" validate:"required,min=3,max=20,alphanum"`
 	Password  string `json:"password" validate:"required,min=6,max=70"`
 	Email     string `gorm:"uniqueIndex" json:"email" validate:"required,email"`
