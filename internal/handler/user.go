@@ -190,5 +190,19 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
-	return c.JSON(fiber.Map{"User": user, "Body": r})
+	UserUpdateResponse := dto.UserUpdateResponse{
+		Status:  "Success",
+		Message: "Updated User",
+		Data: dto.UserData{
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			Username:  user.Username,
+			Email:     user.Email,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Role:      user.Role,
+		},
+	}
+
+	return c.JSON(UserUpdateResponse)
 }
