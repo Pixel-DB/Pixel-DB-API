@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type UploadData struct {
+type PixelArtUploadDataResponse struct {
 	ID                 string
 	OwnerUsername      string
 	OwnerID            string
@@ -17,8 +17,8 @@ type UploadData struct {
 	PixelArtTags       string
 }
 
-type UploadFileResponse struct {
+type PixelArtUploadResponse struct {
 	Status  string
 	Message string
-	Data    UploadData
+	Data    PixelArtUploadDataResponse
 }
