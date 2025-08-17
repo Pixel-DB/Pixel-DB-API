@@ -17,16 +17,16 @@ import (
 // @Summary Create User
 // @Description Creates a new user account by accepting user details such as username, email, password, firstname and lastname.
 // @Tags User
-// @Param        credentials  body  dto.UserRequest true  "User Credentials"
+// @Param        credentials  body  dto.UserCreateRequest true  "User Credentials"
 // @consume json
-// @Success 200 {object} dto.UserResponse
+// @Success 200 {object} dto.UserCreateResponse
 // @Failure 409 {object} dto.ErrorResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /user [post]
 func CreateUser(c *fiber.Ctx) error {
 	u := new(model.Users)
-	r := dto.UserRequest{}
+	r := dto.UserCreateRequest{}
 	db := database.DB
 
 	if err := c.BodyParser(&r); err != nil {
@@ -69,10 +69,10 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusConflict).JSON(ErrorResponse)
 	}
 
-	UserResponse := dto.UserResponse{
+	UserCreateResponse := dto.UserCreateResponse{
 		Status:  "Success",
 		Message: "Created User",
-		Data: dto.UserData{
+		Data: dto.UserCreateDataResponse{
 			ID:        u.ID,
 			CreatedAt: u.CreatedAt,
 			Username:  u.Username,
@@ -83,8 +83,7 @@ func CreateUser(c *fiber.Ctx) error {
 		},
 	}
 
-	return c.JSON(UserResponse)
-
+	return c.JSON(UserCreateResponse)
 }
 
 // GetUser godoc
@@ -92,7 +91,7 @@ func CreateUser(c *fiber.Ctx) error {
 // @Description Get the user Data, when passing your JWT-Token in the Heeader
 // @Tags User
 // @Security BearerAuth
-// @Success 200 {object} dto.UserResponse
+// @Success 200 {object} dto.UserGetResponse
 // @Router /user [get]
 func GetUser(c *fiber.Ctx) error {
 	token := c.Locals("user").(*jwt.Token)
@@ -107,10 +106,10 @@ func GetUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
-	response := dto.UserResponse{
+	UserGetResponse := dto.UserGetResponse{
 		Status:  "success",
 		Message: "Get User",
-		Data: dto.UserData{
+		Data: dto.UserGetDataResponse{
 			ID:        user.ID,
 			CreatedAt: user.CreatedAt,
 			Username:  user.Username,
@@ -121,7 +120,7 @@ func GetUser(c *fiber.Ctx) error {
 		},
 	}
 
-	return c.JSON(response)
+	return c.JSON(UserGetResponse)
 }
 
 // UpdateUser godoc
@@ -129,11 +128,11 @@ func GetUser(c *fiber.Ctx) error {
 // @Description Update the User Data
 // @Tags User
 // @Security BearerAuth
-// @Success 200 {object} dto.UserResponse
+// @Success 200 {object} dto.UserUpdateResponse
 // @Router /user [patch]
 func UpdateUser(c *fiber.Ctx) error {
 	db := database.DB
-	r := dto.UpdateUserRequest{}
+	r := dto.UserUpdateRequest{}
 	if err := c.BodyParser(&r); err != nil {
 		return c.JSON(fiber.Map{"status": "Error"})
 	}
@@ -193,9 +192,8 @@ func UpdateUser(c *fiber.Ctx) error {
 	UserUpdateResponse := dto.UserUpdateResponse{
 		Status:  "Success",
 		Message: "Updated User",
-		Data: dto.UserData{
+		Data: dto.UserUpdateDataResponse{
 			ID:        user.ID,
-			CreatedAt: user.CreatedAt,
 			Username:  user.Username,
 			Email:     user.Email,
 			FirstName: user.FirstName,

@@ -211,7 +211,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserResponse"
+                            "$ref": "#/definitions/dto.UserGetResponse"
                         }
                     }
                 }
@@ -229,7 +229,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UserRequest"
+                            "$ref": "#/definitions/dto.UserCreateRequest"
                         }
                     }
                 ],
@@ -237,7 +237,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserResponse"
+                            "$ref": "#/definitions/dto.UserCreateResponse"
                         }
                     },
                     "400": {
@@ -275,7 +275,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserResponse"
+                            "$ref": "#/definitions/dto.UserUpdateResponse"
                         }
                     }
                 }
@@ -403,7 +403,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserData": {
+        "dto.UserCreateDataResponse": {
             "type": "object",
             "properties": {
                 "CreatedAt": {
@@ -429,7 +429,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserRequest": {
+        "dto.UserCreateRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -464,15 +464,96 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserResponse": {
+        "dto.UserCreateResponse": {
             "type": "object",
             "properties": {
                 "Data": {
-                    "$ref": "#/definitions/dto.UserData"
+                    "$ref": "#/definitions/dto.UserCreateDataResponse"
                 },
                 "Message": {
                     "type": "string",
                     "example": "Created User"
+                },
+                "Status": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "dto.UserGetDataResponse": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FirstName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "LastName": {
+                    "type": "string"
+                },
+                "Role": {
+                    "type": "string"
+                },
+                "Username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserGetResponse": {
+            "type": "object",
+            "properties": {
+                "Data": {
+                    "$ref": "#/definitions/dto.UserGetDataResponse"
+                },
+                "Message": {
+                    "type": "string",
+                    "example": "Get User"
+                },
+                "Status": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "dto.UserUpdateDataResponse": {
+            "type": "object",
+            "properties": {
+                "Email": {
+                    "type": "string"
+                },
+                "FirstName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "LastName": {
+                    "type": "string"
+                },
+                "Role": {
+                    "type": "string"
+                },
+                "Username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "Data": {
+                    "$ref": "#/definitions/dto.UserUpdateDataResponse"
+                },
+                "Message": {
+                    "type": "string",
+                    "example": "Updated User"
                 },
                 "Status": {
                     "type": "string",

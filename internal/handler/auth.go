@@ -17,9 +17,9 @@ import (
 // @Success 200 {object} dto.AuthResponse
 // @Router /auth/login [post]
 func Login(c *fiber.Ctx) error {
-	input := new(dto.LoginRequest)
+	r := new(dto.AuthLoginRequest)
 
-	if err := c.BodyParser(input); err != nil { //Check Request Body
+	if err := c.BodyParser(r); err != nil { //Check Request Body
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
 			Message: "Invalid Request",
@@ -29,7 +29,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	validate := validator.New() //Validate if Email, ...
-	if err := validate.Struct(input); err != nil {
+	if err := validate.Struct(r); err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
 			Message: "Validation Error. Check Request.",
@@ -38,7 +38,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
-	userModel, err := utils.GetUserEmail(input.Email) //Check if user is in DB
+	userModel, err := utils.GetUserEmail(r.Email) //Check if user is in DB
 	if err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
@@ -50,7 +50,7 @@ func Login(c *fiber.Ctx) error {
 
 	if userModel == nil {
 		dummyHash := "$2a$14$ajq8Q7fbtFRQvXpdCq7Jcuy.Rx1h/L4J60Otx.gyNLbAYctGMJ9tK" //Hash something for Timing Attacks protection
-		security.CheckPasswordHash(dummyHash, input.Password)
+		security.CheckPasswordHash(dummyHash, r.Password)
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
 			Message: "Invalid Email or Password",
@@ -59,7 +59,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
-	if !security.CheckPasswordHash(userModel.Password, input.Password) {
+	if !security.CheckPasswordHash(userModel.Password, r.Password) {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
 			Message: "Invalid Email or Password",
@@ -78,13 +78,20 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse)
 	}
 
-	AuthResponse := dto.AuthResponse{
-		ID:       userModel.ID,
-		Email:    userModel.Email,
-		Username: userModel.Username,
-		Role:     userModel.Role,
-		Token:    token,
+	AuthLoginResponse := dto.AuthLoginResponse{
+		Status:  "Success",
+		Message: "Logged in",
+		Token:   token,
+		Data: dto.AuthLoginDataResponse{
+			ID:        userModel.ID,
+			CreatedAt: userModel.CreatedAt,
+			Email:     userModel.Email,
+			FirstName: userModel.FirstName,
+			LastName:  userModel.LastName,
+			Username:  userModel.Username,
+			Role:      userModel.Role,
+		},
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Logged in", "data": AuthResponse})
+	return c.JSON(AuthLoginResponse)
 }

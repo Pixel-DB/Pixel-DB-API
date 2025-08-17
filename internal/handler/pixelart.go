@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -50,7 +51,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	metaField := c.FormValue("meta")
-	meta := new(dto.UploadFileRequest)
+	meta := new(dto.PixelArtUploadRequest)
 	if err := json.Unmarshal([]byte(metaField), &meta); err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
@@ -141,10 +142,10 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	// Create API response data
-	ResponseData := dto.UploadFileResponse{
+	PixelArtUploadResponse := dto.PixelArtUploadResponse{
 		Status:  "Success",
 		Message: "Uploaded PixelArt-File",
-		Data: dto.UploadData{
+		Data: dto.PixelArtUploadDataResponse{
 			ID:                 pixelArts.ID,
 			CreatedAt:          pixelArts.CreatedAt,
 			OwnerID:            user.ID,
@@ -158,7 +159,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			PixelArtDesciption: meta.PixelArtDescription,
 		},
 	}
-	return c.JSON(ResponseData)
+	return c.JSON(PixelArtUploadResponse)
 }
 
 // GetAllPixelArts godoc
