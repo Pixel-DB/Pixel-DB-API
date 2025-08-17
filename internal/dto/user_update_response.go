@@ -6,7 +6,7 @@ type UserUpdateResponse struct {
 	Data    UserData `json:"Data"`
 }
 
-type UserUpdateData struct {
+type UserUpdateDataResponse struct {
 	ID        string `json:"ID"`
 	Username  string `json:"Username"`
 	Email     string `json:"Email"`

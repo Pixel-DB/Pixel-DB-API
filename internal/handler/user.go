@@ -69,10 +69,10 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusConflict).JSON(ErrorResponse)
 	}
 
-	UserResponse := dto.UserResponse{
+	UserCreateResponse := dto.UserCreateResponse{
 		Status:  "Success",
 		Message: "Created User",
-		Data: dto.UserData{
+		Data: dto.UserCreateDataResponse{
 			ID:        u.ID,
 			CreatedAt: u.CreatedAt,
 			Username:  u.Username,
@@ -83,8 +83,7 @@ func CreateUser(c *fiber.Ctx) error {
 		},
 	}
 
-	return c.JSON(UserResponse)
-
+	return c.JSON(UserCreateResponse)
 }
 
 // GetUser godoc
