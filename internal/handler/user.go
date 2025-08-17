@@ -26,7 +26,7 @@ import (
 // @Router /user [post]
 func CreateUser(c *fiber.Ctx) error {
 	u := new(model.Users)
-	r := dto.UserRequest{}
+	r := dto.CreateUserRequest{}
 	db := database.DB
 
 	if err := c.BodyParser(&r); err != nil {
@@ -106,10 +106,10 @@ func GetUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
 	}
 
-	response := dto.UserResponse{
+	UserGetResponse := dto.UserGetResponse{
 		Status:  "success",
 		Message: "Get User",
-		Data: dto.UserData{
+		Data: dto.UserGetDataResponse{
 			ID:        user.ID,
 			CreatedAt: user.CreatedAt,
 			Username:  user.Username,
@@ -120,7 +120,7 @@ func GetUser(c *fiber.Ctx) error {
 		},
 	}
 
-	return c.JSON(response)
+	return c.JSON(UserGetResponse)
 }
 
 // UpdateUser godoc
@@ -132,7 +132,7 @@ func GetUser(c *fiber.Ctx) error {
 // @Router /user [patch]
 func UpdateUser(c *fiber.Ctx) error {
 	db := database.DB
-	r := dto.UpdateUserRequest{}
+	r := dto.UserUpdateRequest{}
 	if err := c.BodyParser(&r); err != nil {
 		return c.JSON(fiber.Map{"status": "Error"})
 	}
@@ -192,9 +192,8 @@ func UpdateUser(c *fiber.Ctx) error {
 	UserUpdateResponse := dto.UserUpdateResponse{
 		Status:  "Success",
 		Message: "Updated User",
-		Data: dto.UserData{
+		Data: dto.UserUpdateDataResponse{
 			ID:        user.ID,
-			CreatedAt: user.CreatedAt,
 			Username:  user.Username,
 			Email:     user.Email,
 			FirstName: user.FirstName,
