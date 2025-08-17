@@ -23,7 +23,7 @@ import (
 // @Security BearerAuth
 // @Param        pixelart formData  file false "PixelArt-File"
 // @consume json
-// @Success 200 {object} dto.UploadFileResponse
+// @Success 200 {object} dto.PixelArtUploadResponse
 // @Router /pixelart [post]
 func UploadPixelArt(c *fiber.Ctx) error {
 

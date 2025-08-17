@@ -43,7 +43,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequest"
+                            "$ref": "#/definitions/dto.AuthLoginRequest"
                         }
                     }
                 ],
@@ -51,7 +51,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AuthResponse"
+                            "$ref": "#/definitions/dto.AuthLoginResponse"
                         }
                     }
                 }
@@ -116,7 +116,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UploadFileResponse"
+                            "$ref": "#/definitions/dto.PixelArtUploadResponse"
                         }
                     }
                 }
@@ -289,22 +289,64 @@
                 }
             }
         },
-        "dto.AuthResponse": {
+        "dto.AuthLoginDataResponse": {
             "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FirstName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "LastName": {
+                    "type": "string"
+                },
+                "Role": {
+                    "type": "string"
+                },
+                "Username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AuthLoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
+                "password": {
+                    "type": "string",
+                    "maxLength": 70,
+                    "minLength": 6
+                }
+            }
+        },
+        "dto.AuthLoginResponse": {
+            "type": "object",
+            "properties": {
+                "Data": {
+                    "$ref": "#/definitions/dto.AuthLoginDataResponse"
                 },
-                "role": {
-                    "type": "string"
+                "Message": {
+                    "type": "string",
+                    "example": "Logged in"
                 },
-                "token": {
-                    "type": "string"
+                "Status": {
+                    "type": "string",
+                    "example": "Success"
                 },
-                "username": {
+                "Token": {
                     "type": "string"
                 }
             }
@@ -324,24 +366,7 @@
                 }
             }
         },
-        "dto.LoginRequest": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 70,
-                    "minLength": 6
-                }
-            }
-        },
-        "dto.UploadData": {
+        "dto.PixelArtUploadDataResponse": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -383,11 +408,11 @@
                 }
             }
         },
-        "dto.UploadFileResponse": {
+        "dto.PixelArtUploadResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/dto.UploadData"
+                    "$ref": "#/definitions/dto.PixelArtUploadDataResponse"
                 },
                 "message": {
                     "type": "string"
