@@ -32,7 +32,7 @@ func main() {
 			AllowOrigins: config.Config("FRONTEND_URL"),
 		}),
 		func(c *fiber.Ctx) error {
-			middleware.UpdateRequestCount(1)
+			middleware.UpdateRequestCount(1) //Stats Counter
 			return c.Next()
 		},
 	)
