@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	_ "github.com/Pixel-DB/Pixel-DB-API/docs"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
@@ -8,7 +9,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
+	"sync/atomic"
 )
+
+var requestCount int64
 
 // @title PixelDB
 // @version 0.1
@@ -24,9 +28,16 @@ import (
 func main() {
 	app := fiber.New()
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: config.Config("FRONTEND_URL"),
-	}))
+	app.Use(
+		cors.New(cors.Config{
+			AllowOrigins: config.Config("FRONTEND_URL"),
+		}),
+		func(c *fiber.Ctx) error {
+			atomic.AddInt64(&requestCount, 1)
+			fmt.Println(requestCount)
+			return c.Next()
+		},
+	)
 
 	router.SetupRouter(app)
 	database.ConnectDB()
