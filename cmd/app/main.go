@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
-	"sync/atomic"
 )
 
 var requestCount int64
@@ -33,7 +32,7 @@ func main() {
 			AllowOrigins: config.Config("FRONTEND_URL"),
 		}),
 		func(c *fiber.Ctx) error {
-			middleware.UpdateRequestCount(atomic.AddInt64(&requestCount, 1))
+			middleware.UpdateRequestCount(1)
 			return c.Next()
 		},
 	)
