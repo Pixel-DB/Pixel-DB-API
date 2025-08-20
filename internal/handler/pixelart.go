@@ -178,7 +178,7 @@ func GetAllPixelArts(c *fiber.Ctx) error {
 	pg := paginate.New()
 	data := pg.With(database.DB.Model(&model.PixelArts{})).Request(c.Request()).Response(&pixelArts)
 
-	response := dto.APIResponse{
+	response := dto.PixelArtGetAllResponse{
 		Status:  "Success",
 		Message: "",
 		Data:    data,
@@ -209,7 +209,7 @@ func GetPixelArt(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	response := dto.APIResponse{
+	response := dto.PixelArtGetAllResponse{
 		Status:  "Success",
 		Message: "",
 		Data:    p,
