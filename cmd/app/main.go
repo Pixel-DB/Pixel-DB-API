@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	_ "github.com/Pixel-DB/Pixel-DB-API/docs"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
@@ -8,7 +10,6 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/internal/router"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"log"
 )
 
 var requestCount int64

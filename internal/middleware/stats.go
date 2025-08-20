@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 )
@@ -11,7 +12,7 @@ func UpdateRequestCount(count int64) {
 	c := new(model.Stats)
 
 	db.Where(&model.Stats{ID: 1}).First(c)
-	oldCount := c.Count
+	oldCount := c.RequestCount
 	fmt.Print("Old")
 	fmt.Println(oldCount)
 
