@@ -1,21 +1,16 @@
 package middleware
 
 import (
-	"fmt"
-
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 )
 
 func UpdateRequestCount(count int64) {
 	db := database.DB
-	c := new(model.Stats)
+	var stats model.Stats
 
-	db.Where(&model.Stats{ID: 1}).First(c)
-	oldCount := c.RequestCount
-	fmt.Print("Old")
-	fmt.Println(oldCount)
+	db.Where("id = ?", 1).First(&stats)
 
-	db.Model(&model.Stats{}).Where("ID = ?", 1).Update("Count", oldCount+count)
-	fmt.Println(count)
+	stats.RequestCount = stats.RequestCount + count
+	db.Save(&stats)
 }

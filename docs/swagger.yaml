@@ -2,11 +2,27 @@ basePath: /
 definitions:
   dto.APIResponse:
     properties:
-      data: {}
+      data:
+        $ref: '#/definitions/dto.APIResponseData'
       message:
         type: string
       status:
         type: string
+    type: object
+  dto.APIResponseData:
+    properties:
+      totalGithubStars:
+        format: int64
+        type: integer
+      totalPixelArts:
+        format: int64
+        type: integer
+      totalRequests:
+        format: int64
+        type: integer
+      totalUsers:
+        format: int64
+        type: integer
     type: object
   dto.AuthLoginDataResponse:
     properties:
