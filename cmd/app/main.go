@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	_ "github.com/Pixel-DB/Pixel-DB-API/docs"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/middleware"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/router"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -33,8 +33,7 @@ func main() {
 			AllowOrigins: config.Config("FRONTEND_URL"),
 		}),
 		func(c *fiber.Ctx) error {
-			atomic.AddInt64(&requestCount, 1)
-			fmt.Println(requestCount)
+			middleware.UpdateRequestCount(atomic.AddInt64(&requestCount, 1))
 			return c.Next()
 		},
 	)

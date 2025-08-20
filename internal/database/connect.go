@@ -31,5 +31,6 @@ func ConnectDB() {
 	}
 	fmt.Println("Connection Opened to Database")
 	DB.AutoMigrate(model.Users{}, model.PixelArts{}, model.Stats{}) // Load the models (tables) to DB
+	DB.FirstOrCreate(&model.Stats{}, model.Stats{ID: 1})            //Create Stats Table
 	fmt.Println("Database Migrated")
 }
