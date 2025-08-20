@@ -7,6 +7,8 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - ../:/app
+    networks:
+      - backend
   db-dev:
     image: postgres
     environment:
@@ -18,6 +20,8 @@ services:
       - db-dev:/data/postgres
     ports:
       - "5432:5432"
+    networks:
+      - backend  
   minio-dev:
     image: bitnami/minio:latest
     ports:
@@ -27,7 +31,15 @@ services:
       - MINIO_ROOT_USER=${MINIO_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
     volumes:
-      - ~/minio/data:/data
-    command: server /data --console-address ":${MINIO_PORT}"     
+      - minio-dev:/data/minio
+    command: server /data/minio --console-address ":${MINIO_PORT}"
+    networks:
+      - backend     
 volumes:
-  db-dev:        
+  db-dev:   
+  minio-dev:     
+
+networks:
+  backend:
+    name: PixelDB-dev-network
+    external: true
