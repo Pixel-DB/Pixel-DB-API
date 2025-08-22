@@ -2,7 +2,9 @@ package handler
 
 import (
 	_ "github.com/Pixel-DB/Pixel-DB-API/docs"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,10 +15,24 @@ import (
 // @Success		200	{object}	dto.APIResponse
 // @Router / [get]
 func Hello(c *fiber.Ctx) error {
+	db := database.DB
+	s := new(model.Stats)
+	var TotalUsers int64
+	var TotalPixelArts int64
+
+	db.Where(&model.Stats{ID: 1}).First(s)
+	db.Model(&model.Users{}).Count(&TotalUsers)
+	db.Model(&model.PixelArts{}).Count(&TotalPixelArts)
+
 	respone := dto.APIResponse{
 		Status:  "success",
 		Message: "Hello? I'm okay!",
-		Data:    "",
+		Data: dto.APIResponseData{
+			TotalRequests:    s.RequestCount,
+			TotalUsers:       TotalUsers,
+			TotalPixelArts:   TotalPixelArts,
+			TotalGithubStars: 0,
+		},
 	}
 
 	return c.JSON(respone)

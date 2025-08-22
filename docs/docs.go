@@ -286,12 +286,35 @@ const docTemplate = `{
         "dto.APIResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "data": {
+                    "$ref": "#/definitions/dto.APIResponseData"
+                },
                 "message": {
                     "type": "string"
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.APIResponseData": {
+            "type": "object",
+            "properties": {
+                "totalGithubStars": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "totalPixelArts": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "totalRequests": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "totalUsers": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
