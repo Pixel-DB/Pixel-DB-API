@@ -7,15 +7,15 @@ import (
 )
 
 type Result struct {
-	width  int
-	height int
+	Width  int
+	Height int
 }
 
-func checkResolution(i io.Reader) (Result, error) {
+func CheckResolution(i io.Reader) (Result, error) {
 	im, _, err := image.DecodeConfig(i)
 	if err != nil {
 		return Result{}, err
 	}
 
-	return Result{width: im.Width, height: im.Height}, nil
+	return Result{Width: im.Width, Height: im.Height}, nil
 }

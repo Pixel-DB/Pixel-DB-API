@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
-
+	"fmt"
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -89,6 +89,12 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
+
+	res, err := utils.CheckResolution(fileContent)
+	if err != nil {
+		fmt.Println("Error")
+	}
+	fmt.Println(res)
 
 	ext := utils.GetExt(file.Filename)
 	if ext != "png" {
