@@ -91,7 +91,14 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	res, err := utils.CheckResolution(bytes.NewReader(buf))
-	fmt.Println(res)
+	if res.Height != res.Width {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid Resolution",
+			Error:   fmt.Sprintf("The uploaded file has an invalid resolution. Height and Width must be equal. Height: %d, Width: %d", res.Height, res.Width),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
 
 	ext := utils.GetExt(file.Filename) //Get file extension
 	if ext != "png" {
