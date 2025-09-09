@@ -11,7 +11,6 @@ var rolePermissions = map[string][]string{
 	"admin": {
 		"pixelart.upload",
 		"pixelart.review",
-		"user.delete",
 	},
 }
 
