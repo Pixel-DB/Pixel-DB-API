@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
@@ -80,17 +83,24 @@ func UploadPixelArt(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
+	defer fileContent.Close() //Close File, when function Ends
 
-	if err := fileContent.Close(); err != nil { //Close File
+	buf, err := io.ReadAll(fileContent)
+	if err != nil {
+		return err
+	}
+
+	res, err := utils.CheckResolution(bytes.NewReader(buf))
+	if res.Height != res.Width {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
-			Message: "Failed to close the PixelArt-File",
-			Error:   err.Error(),
+			Message: "Invalid Resolution",
+			Error:   fmt.Sprintf("The uploaded file has an invalid resolution. Height and Width must be equal. Height: %d, Width: %d", res.Height, res.Width),
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
 	}
 
-	ext := utils.GetExt(file.Filename)
+	ext := utils.GetExt(file.Filename) //Get file extension
 	if ext != "png" {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
@@ -131,7 +141,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	}
 
 	//Upload file to MinIO
-	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFileName, fileContent, file.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	_, err = minioClient.PutObject(context.Background(), config.Config("MINIO_BUCKET_NAME"), newFileName, bytes.NewReader(buf), int64(len(buf)), minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
