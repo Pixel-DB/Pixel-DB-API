@@ -11,6 +11,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/morkid/paginate"
 )
 
 // CreateUser godoc
@@ -203,4 +204,19 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(UserUpdateResponse)
+}
+
+func GetAllUsers(c *fiber.Ctx) error {
+	var users []dto.UserGetDataResponse
+
+	pg := paginate.New()
+	data := pg.With(database.DB.Model(&model.Users{})).Request(c.Request()).Response(&users)
+
+	response := dto.UsersGetAllResponse{
+		Status:  "Success",
+		Message: "",
+		Data:    data,
+	}
+
+	return c.JSON(response)
 }
