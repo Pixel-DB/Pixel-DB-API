@@ -4,7 +4,6 @@ var rolePermissions = map[string][]string{
 	"user": {
 		"pixelart.upload",
 	},
-	"banned_user": {},
 	"moderator": {
 		"pixelart.upload",
 		"pixelart.review",
