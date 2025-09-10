@@ -5,6 +5,7 @@ import (
 
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/middleware"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/security"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
@@ -207,6 +208,26 @@ func UpdateUser(c *fiber.Ctx) error {
 }
 
 func GetAllUsers(c *fiber.Ctx) error {
+	//Get user info from JWT token
+	token := c.Locals("user").(*jwt.Token)
+	userID := utils.GetUserIDFromToken(token)
+	user, err := utils.GetUser(userID)
+	if err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Invalid user credentials",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
+	}
+	if !middleware.HasPermission(user.Role, "users.view") {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "You don't have permission for this route",
+			Error:   "Forbidden",
+		}
+		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse)
+	}
 	var users []dto.UserGetDataResponse
 
 	// Return all Users with Pagination
