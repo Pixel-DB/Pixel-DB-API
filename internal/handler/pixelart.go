@@ -10,6 +10,7 @@ import (
 	"github.com/Pixel-DB/Pixel-DB-API/config"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
+	"github.com/Pixel-DB/Pixel-DB-API/internal/middleware"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/model"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/utils"
 	"github.com/go-playground/validator"
@@ -41,6 +42,14 @@ func UploadPixelArt(c *fiber.Ctx) error {
 			Error:   err.Error(),
 		}
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
+	}
+	if !middleware.HasPermission(user.Role, "pixelart.upload") {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "You don't have permission to upload PixelArts",
+			Error:   "Forbidden",
+		}
+		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse)
 	}
 
 	file, err := c.FormFile("pixelart") //Get file from passed Data
