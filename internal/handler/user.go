@@ -209,6 +209,7 @@ func UpdateUser(c *fiber.Ctx) error {
 func GetAllUsers(c *fiber.Ctx) error {
 	var users []dto.UserGetDataResponse
 
+	// Return all Users with Pagination
 	pg := paginate.New()
 	data := pg.With(database.DB.Model(&model.Users{})).Request(c.Request()).Response(&users)
 
