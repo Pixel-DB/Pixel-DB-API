@@ -46,7 +46,7 @@ func UploadPixelArt(c *fiber.Ctx) error {
 	if !middleware.HasPermission(user.Role, "pixelart.upload") {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
-			Message: "You don't have permission to upload PixelArts",
+			Message: "You don't have permission for this route",
 			Error:   "Forbidden",
 		}
 		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse)

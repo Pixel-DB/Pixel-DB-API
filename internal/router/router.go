@@ -19,7 +19,8 @@ func SetupRouter(app *fiber.App) {
 
 	user := app.Group("/user")                                  //User Route
 	user.Post("/", handler.CreateUser)                          //Create User
-	user.Get("/", middleware.Protected(), handler.GetUser)      //Get User by Token
+	user.Get("/me", middleware.Protected(), handler.GetUser)    //Get User by Token
+	user.Get("/", middleware.Protected(), handler.GetAllUsers)  //Get all Users
 	user.Patch("/", middleware.Protected(), handler.UpdateUser) //Update User
 
 	auth := app.Group("/auth")         //Auth Route
