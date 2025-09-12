@@ -235,7 +235,12 @@ func GetAllUsers(c *fiber.Ctx) error {
 	if searchInput != "" {
 		pg := paginate.New()
 		data := pg.With(database.DB.Model(&model.Users{}).Where("email ILIKE ? OR username ILIKE ? OR last_name ILIKE ? OR first_name ILIKE ?", "%"+strings.ToLower(searchInput)+"%", "%"+strings.ToLower(searchInput)+"%", "%"+strings.ToLower(searchInput)+"%", "%"+strings.ToLower(searchInput)+"%")).Request(c.Request()).Response(&users)
-		return c.JSON(data)
+		response := dto.UsersGetAllResponse{
+			Status:  "Success",
+			Message: "",
+			Data:    data,
+		}
+		return c.JSON(response)
 	}
 
 	// Return all Users with Pagination
