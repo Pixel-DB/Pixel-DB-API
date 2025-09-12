@@ -60,3 +60,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 
 	return c.JSON(response)
 }
+
+func BanUser(c *fiber.Ctx) error {
+	return c.SendString("BanUser")
+}
