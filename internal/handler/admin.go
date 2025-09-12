@@ -66,13 +66,32 @@ func BanUser(c *fiber.Ctx) error {
 }
 
 func DeleteUser(c *fiber.Ctx) error {
-	userID := c.Params("userID")
-
-	err := utils.DeleteUser(userID)
+	token := c.Locals("user").(*jwt.Token)
+	userID := utils.GetUserIDFromToken(token)
+	user, err := utils.GetUser(userID)
 	if err != nil {
 		ErrorResponse := dto.ErrorResponse{
 			Status:  "Error",
-			Message: "Couldn't delete User with ID " + userID,
+			Message: "Invalid user credentials",
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse)
+	}
+	if !middleware.HasPermission(user.Role, "users.delete") {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "You don't have permission for this route",
+			Error:   "Forbidden",
+		}
+		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse)
+	}
+	DeleteUserID := c.Params("userID")
+
+	err = utils.DeleteUser(DeleteUserID)
+	if err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Couldn't delete User with ID " + DeleteUserID,
 			Error:   err.Error(),
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
@@ -80,9 +99,9 @@ func DeleteUser(c *fiber.Ctx) error {
 
 	response := dto.AdminDeleteUserResponse{
 		Status:  "Success",
-		Message: "Deleted User with ID " + userID,
+		Message: "Deleted User with ID " + DeleteUserID,
 		Data: dto.AdminDeleteUserDataResponse{
-			ID: userID,
+			ID: DeleteUserID,
 		},
 	}
 
