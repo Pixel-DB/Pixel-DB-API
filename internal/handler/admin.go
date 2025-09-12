@@ -64,3 +64,27 @@ func GetAllUsers(c *fiber.Ctx) error {
 func BanUser(c *fiber.Ctx) error {
 	return c.SendString("BanUser")
 }
+
+func DeleteUser(c *fiber.Ctx) error {
+	userID := c.Params("userID")
+
+	err := utils.DeleteUser(userID)
+	if err != nil {
+		ErrorResponse := dto.ErrorResponse{
+			Status:  "Error",
+			Message: "Couldn't delete User with ID " + userID,
+			Error:   err.Error(),
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse)
+	}
+
+	response := dto.AdminDeleteUserResponse{
+		Status:  "Success",
+		Message: "Deleted User with ID " + userID,
+		Data: dto.AdminDeleteUserDataResponse{
+			ID: userID,
+		},
+	}
+
+	return c.JSON(response)
+}

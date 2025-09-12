@@ -25,8 +25,9 @@ func SetupRouter(app *fiber.App) {
 	auth := app.Group("/auth")         //Auth Route
 	auth.Post("/login", handler.Login) //Login User
 
-	admin := app.Group("/admin")                                    //Admin Route
-	admin.Get("/user", middleware.Protected(), handler.GetAllUsers) //Get all Users
+	admin := app.Group("/admin")                                              //Admin Route
+	admin.Get("/user", middleware.Protected(), handler.GetAllUsers)           //Get all Users
+	admin.Delete("/user/:userID", middleware.Protected(), handler.DeleteUser) //Get all Users
 
 	pixelart := app.Group("/pixelart")                                 //Pixel Art Route
 	pixelart.Post("/", middleware.Protected(), handler.UploadPixelArt) //Upload a Pixel Art
