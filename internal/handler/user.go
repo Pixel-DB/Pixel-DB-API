@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Pixel-DB/Pixel-DB-API/internal/database"
 	"github.com/Pixel-DB/Pixel-DB-API/internal/dto"
@@ -229,6 +230,13 @@ func GetAllUsers(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse)
 	}
 	var users []dto.UserGetDataResponse
+
+	searchInput := c.Query("search")
+	if searchInput != "" {
+		pg := paginate.New()
+		data := pg.With(database.DB.Model(&model.Users{}).Where("email ILIKE ? OR username ILIKE ? OR last_name ILIKE ? OR first_name ILIKE ?", "%"+strings.ToLower(searchInput)+"%", "%"+strings.ToLower(searchInput)+"%", "%"+strings.ToLower(searchInput)+"%", "%"+strings.ToLower(searchInput)+"%")).Request(c.Request()).Response(&users)
+		return c.JSON(data)
+	}
 
 	// Return all Users with Pagination
 	pg := paginate.New()
